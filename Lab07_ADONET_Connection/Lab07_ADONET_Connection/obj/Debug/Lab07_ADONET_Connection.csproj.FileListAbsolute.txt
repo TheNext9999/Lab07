@@ -37,3 +37,4 @@ D:\BT Classroom Lab\Lab07\Lab07_ADONET_Connection\Lab07_ADONET_Connection\bin\De
 D:\BT Classroom Lab\Lab07\Lab07_ADONET_Connection\Lab07_ADONET_Connection\obj\Debug\Lab07_AD.AA555AC1.Up2Date
 D:\BT Classroom Lab\Lab07\Lab07_ADONET_Connection\Lab07_ADONET_Connection\obj\Debug\Lab07_ADONET_Connection.exe
 D:\BT Classroom Lab\Lab07\Lab07_ADONET_Connection\Lab07_ADONET_Connection\obj\Debug\Lab07_ADONET_Connection.pdb
+D:\BT Classroom Lab\Lab07\Lab07_ADONET_Connection\Lab07_ADONET_Connection\obj\Debug\Lab07_ADONET_Connection.GUI.frmLab08.resources

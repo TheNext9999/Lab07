@@ -92,17 +92,29 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BUS\SinhVienBUS.cs" />
     <Compile Include="DAL\DbConnectionFactory.cs" />
+    <Compile Include="DAL\MySqlHelper.cs" />
+    <Compile Include="DAL\SinhVienDAL.cs" />
     <Compile Include="GUI\frmKiemTraKetNoi.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="GUI\frmKiemTraKetNoi.Designer.cs">
       <DependentUpon>frmKiemTraKetNoi.cs</DependentUpon>
     </Compile>
+    <Compile Include="GUI\frmLab08.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\frmLab08.Designer.cs">
+      <DependentUpon>frmLab08.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="GUI\frmKiemTraKetNoi.resx">
       <DependentUpon>frmKiemTraKetNoi.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\frmLab08.resx">
+      <DependentUpon>frmLab08.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -128,7 +140,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="BUS\" />
     <Folder Include="DTO\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
