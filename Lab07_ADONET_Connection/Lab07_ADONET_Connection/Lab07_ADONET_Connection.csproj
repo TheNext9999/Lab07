@@ -108,6 +108,12 @@
     <Compile Include="GUI\frmLab08.Designer.cs">
       <DependentUpon>frmLab08.cs</DependentUpon>
     </Compile>
+    <Compile Include="GUI\frmLab09.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\frmLab09.Designer.cs">
+      <DependentUpon>frmLab09.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="GUI\frmKiemTraKetNoi.resx">
@@ -115,6 +121,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="GUI\frmLab08.resx">
       <DependentUpon>frmLab08.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\frmLab09.resx">
+      <DependentUpon>frmLab09.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

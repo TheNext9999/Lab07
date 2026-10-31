@@ -18,6 +18,7 @@ namespace Lab07_ADONET_Connection
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new frmKiemTraKetNoi());
             Application.Run(new Lab07_ADONET_Connection.GUI.frmLab08());
+            Application.Run(new Lab07_ADONET_Connection.GUI.frmLab09());
         }
     }
 }

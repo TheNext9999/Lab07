@@ -38,3 +38,4 @@ D:\BT Classroom Lab\Lab07\Lab07_ADONET_Connection\Lab07_ADONET_Connection\obj\De
 D:\BT Classroom Lab\Lab07\Lab07_ADONET_Connection\Lab07_ADONET_Connection\obj\Debug\Lab07_ADONET_Connection.exe
 D:\BT Classroom Lab\Lab07\Lab07_ADONET_Connection\Lab07_ADONET_Connection\obj\Debug\Lab07_ADONET_Connection.pdb
 D:\BT Classroom Lab\Lab07\Lab07_ADONET_Connection\Lab07_ADONET_Connection\obj\Debug\Lab07_ADONET_Connection.GUI.frmLab08.resources
+D:\BT Classroom Lab\Lab07\Lab07_ADONET_Connection\Lab07_ADONET_Connection\obj\Debug\Lab07_ADONET_Connection.GUI.frmLab09.resources

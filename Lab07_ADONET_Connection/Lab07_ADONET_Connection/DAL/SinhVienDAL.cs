@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Text;
 using MySql.Data.MySqlClient;
 
 namespace Lab07_ADONET_Connection.DAL
 {
     public class SinhVienDAL
     {
+        #region HÀM XỬ LÝ CHO LAB 08
         // Bài 1: Đếm số sinh viên bằng ExecuteScalar
         public int DemSoSinhVien()
         {
@@ -124,5 +127,151 @@ namespace Lab07_ADONET_Connection.DAL
                 return rows;
             }
         }
+        #endregion
+
+        #region HÀM XỬ LÝ CHO LAB 09
+        // Bài 1: Nạp MySqlDataReader vào DataTable (JOIN SinhVien với Khoa)
+        public DataTable LoadStudents()
+        {
+            string sql = @"SELECT sv.MaSV, sv.HoTen, sv.NgaySinh,
+                           CASE sv.GioiTinh WHEN 1 THEN 'Nam' ELSE 'Nữ' END AS GioiTinhText,
+                           k.TenKhoa, sv.DiemTB, sv.Email, sv.MaKhoa, sv.GioiTinh
+                           FROM SinhVien sv 
+                           JOIN Khoa k ON sv.MaKhoa = k.MaKhoa
+                           ORDER BY sv.HoTen";
+            return MySqlHelper.ExecuteQuery(sql);
+        }
+
+        // Bài 2: Tìm kiếm gần đúng theo họ tên (LIKE @Keyword)
+        public DataTable SearchByName(string keyword)
+        {
+            string sql = @"SELECT sv.MaSV, sv.HoTen, k.TenKhoa, sv.DiemTB, sv.NgaySinh
+                           FROM SinhVien sv 
+                           JOIN Khoa k ON sv.MaKhoa = k.MaKhoa
+                           WHERE sv.HoTen LIKE @Keyword
+                           ORDER BY sv.HoTen";
+            MySqlParameter[] p = {
+                new MySqlParameter("@Keyword", MySqlDbType.VarChar, 100) { Value = "%" + keyword.Trim() + "%" }
+            };
+            return MySqlHelper.ExecuteQuery(sql, CommandType.Text, p);
+        }
+
+        // Bài 3: Lọc theo khoa và khoảng điểm (BETWEEN @Min AND @Max)
+        public DataTable FilterByKhoaAndDiem(string maKhoa, double min, double max)
+        {
+            StringBuilder sql = new StringBuilder(@"SELECT sv.MaSV, sv.HoTen, k.TenKhoa, sv.DiemTB
+                                                    FROM SinhVien sv 
+                                                    JOIN Khoa k ON sv.MaKhoa = k.MaKhoa
+                                                    WHERE sv.DiemTB BETWEEN @Min AND @Max");
+            List<MySqlParameter> pList = new List<MySqlParameter>
+            {
+                new MySqlParameter("@Min", MySqlDbType.Decimal) { Value = min },
+                new MySqlParameter("@Max", MySqlDbType.Decimal) { Value = max }
+            };
+
+            if (!string.IsNullOrEmpty(maKhoa) && maKhoa != "ALL")
+            {
+                sql.Append(" AND sv.MaKhoa = @MaKhoa");
+                pList.Add(new MySqlParameter("@MaKhoa", MySqlDbType.VarChar, 10) { Value = maKhoa });
+            }
+
+            return MySqlHelper.ExecuteQuery(sql.ToString(), CommandType.Text, pList.ToArray());
+        }
+
+        // Bài 4: Phân trang Server-side bằng MySQL (LIMIT @PageSize OFFSET @Offset)
+        public DataTable GetStudentsPaged(int pageIndex, int pageSize, out int totalRecords)
+        {
+            string countSql = "SELECT COUNT(*) FROM SinhVien";
+            totalRecords = Convert.ToInt32(MySqlHelper.ExecuteScalar(countSql));
+
+            string sql = @"SELECT sv.MaSV, sv.HoTen, sv.NgaySinh,
+                           CASE sv.GioiTinh WHEN 1 THEN 'Nam' ELSE 'Nữ' END AS GioiTinhText,
+                           k.TenKhoa, sv.DiemTB, sv.Email
+                           FROM SinhVien sv 
+                           JOIN Khoa k ON sv.MaKhoa = k.MaKhoa
+                           ORDER BY sv.MaSV
+                           LIMIT @PageSize OFFSET @Offset";
+
+            MySqlParameter[] p = {
+                new MySqlParameter("@PageSize", MySqlDbType.Int32) { Value = pageSize },
+                new MySqlParameter("@Offset", MySqlDbType.Int32) { Value = (pageIndex - 1) * pageSize }
+            };
+
+            return MySqlHelper.ExecuteQuery(sql, CommandType.Text, p);
+        }
+
+        // Bài 6, 7, 8: Tìm kiếm đa tiêu chí, Lọc theo tuổi & Sắp xếp động an toàn (Whitelist)
+        public DataTable SearchMultiCriteria(string maSV, string hoTen, string maKhoa, int? gioiTinh,
+                                             double? minDiem, double? maxDiem, int? minTuoi, int? maxTuoi,
+                                             string sortColumn, bool isAsc, int pageIndex, int pageSize, out int totalRecords)
+        {
+            StringBuilder sql = new StringBuilder(@"SELECT sv.MaSV, sv.HoTen, sv.NgaySinh,
+                           CASE sv.GioiTinh WHEN 1 THEN 'Nam' ELSE 'Nữ' END AS GioiTinhText,
+                           k.TenKhoa, sv.DiemTB, sv.Email, sv.MaKhoa, sv.GioiTinh,
+                           TIMESTAMPDIFF(YEAR, sv.NgaySinh, CURDATE()) AS Tuoi
+                           FROM SinhVien sv 
+                           JOIN Khoa k ON sv.MaKhoa = k.MaKhoa WHERE 1=1");
+
+            List<MySqlParameter> pList = new List<MySqlParameter>();
+
+            if (!string.IsNullOrWhiteSpace(maSV))
+            {
+                sql.Append(" AND sv.MaSV LIKE @MaSV");
+                pList.Add(new MySqlParameter("@MaSV", "%" + maSV.Trim() + "%"));
+            }
+            if (!string.IsNullOrWhiteSpace(hoTen))
+            {
+                sql.Append(" AND sv.HoTen LIKE @HoTen");
+                pList.Add(new MySqlParameter("@HoTen", "%" + hoTen.Trim() + "%"));
+            }
+            if (!string.IsNullOrWhiteSpace(maKhoa) && maKhoa != "ALL")
+            {
+                sql.Append(" AND sv.MaKhoa = @MaKhoa");
+                pList.Add(new MySqlParameter("@MaKhoa", maKhoa));
+            }
+            if (gioiTinh.HasValue)
+            {
+                sql.Append(" AND sv.GioiTinh = @GioiTinh");
+                pList.Add(new MySqlParameter("@GioiTinh", gioiTinh.Value));
+            }
+            if (minDiem.HasValue)
+            {
+                sql.Append(" AND sv.DiemTB >= @MinDiem");
+                pList.Add(new MySqlParameter("@MinDiem", minDiem.Value));
+            }
+            if (maxDiem.HasValue)
+            {
+                sql.Append(" AND sv.DiemTB <= @MaxDiem");
+                pList.Add(new MySqlParameter("@MaxDiem", maxDiem.Value));
+            }
+            if (minTuoi.HasValue)
+            {
+                sql.Append(" AND TIMESTAMPDIFF(YEAR, sv.NgaySinh, CURDATE()) >= @MinTuoi");
+                pList.Add(new MySqlParameter("@MinTuoi", minTuoi.Value));
+            }
+            if (maxTuoi.HasValue)
+            {
+                sql.Append(" AND TIMESTAMPDIFF(YEAR, sv.NgaySinh, CURDATE()) <= @MaxTuoi");
+                pList.Add(new MySqlParameter("@MaxTuoi", maxTuoi.Value));
+            }
+
+            string countSql = "SELECT COUNT(*) FROM (" + sql.ToString() + ") AS TempTable";
+            totalRecords = Convert.ToInt32(MySqlHelper.ExecuteScalar(countSql, CommandType.Text, pList.ToArray()));
+
+            string safeSort = "sv.MaSV";
+            if (sortColumn == "HoTen") safeSort = "sv.HoTen";
+            else if (sortColumn == "DiemTB") safeSort = "sv.DiemTB";
+            else if (sortColumn == "NgaySinh") safeSort = "sv.NgaySinh";
+            else if (sortColumn == "TenKhoa") safeSort = "k.TenKhoa";
+
+            sql.Append($" ORDER BY {safeSort} {(isAsc ? "ASC" : "DESC")}");
+
+            sql.Append(" LIMIT @PageSize OFFSET @Offset");
+            pList.Add(new MySqlParameter("@PageSize", pageSize));
+            pList.Add(new MySqlParameter("@Offset", (pageIndex - 1) * pageSize));
+
+            return MySqlHelper.ExecuteQuery(sql.ToString(), CommandType.Text, pList.ToArray());
+        }
+        #endregion
     }
 }
