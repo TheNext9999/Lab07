@@ -114,6 +114,12 @@
     <Compile Include="GUI\frmLab09.Designer.cs">
       <DependentUpon>frmLab09.cs</DependentUpon>
     </Compile>
+    <Compile Include="GUI\frmLab10.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\frmLab10.Designer.cs">
+      <DependentUpon>frmLab10.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="GUI\frmKiemTraKetNoi.resx">

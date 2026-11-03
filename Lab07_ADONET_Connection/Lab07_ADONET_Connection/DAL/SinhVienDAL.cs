@@ -8,8 +8,7 @@ namespace Lab07_ADONET_Connection.DAL
 {
     public class SinhVienDAL
     {
-        #region HÀM XỬ LÝ CHO LAB 08
-        // Bài 1: Đếm số sinh viên bằng ExecuteScalar
+        #region HÀM XỬ LÝ CHO LAB 08 (CONNECTED ADO.NET)
         public int DemSoSinhVien()
         {
             string sql = "SELECT COUNT(*) FROM SinhVien";
@@ -17,14 +16,12 @@ namespace Lab07_ADONET_Connection.DAL
             return Convert.ToInt32(res);
         }
 
-        // Bài 2: Đọc danh sách bằng ExecuteReader
         public DataTable LayDanhSachSinhVien()
         {
             string sql = "SELECT MaSV, HoTen, DiemTB FROM SinhVien ORDER BY HoTen";
             return MySqlHelper.ExecuteQuery(sql);
         }
 
-        // Bài 3: Thêm sinh viên bằng ExecuteNonQuery
         public int ThemSinhVien(string maSV, string hoTen, DateTime ngaySinh, bool gioiTinh, string maKhoa, double diemTB, string email)
         {
             string sql = @"INSERT INTO SinhVien (MaSV, HoTen, NgaySinh, GioiTinh, MaKhoa, DiemTB, Email)
@@ -43,7 +40,6 @@ namespace Lab07_ADONET_Connection.DAL
             return MySqlHelper.ExecuteNonQuery(sql, CommandType.Text, p);
         }
 
-        // Bài 4: Cập nhật điểm bằng tham số
         public int CapNhatDiem(string maSV, double diemTB)
         {
             string sql = "UPDATE SinhVien SET DiemTB = @DiemTB WHERE MaSV = @MaSV";
@@ -54,7 +50,6 @@ namespace Lab07_ADONET_Connection.DAL
             return MySqlHelper.ExecuteNonQuery(sql, CommandType.Text, p);
         }
 
-        // Bài 5: Gọi Stored Procedure lấy danh sách theo khoa
         public DataTable LaySinhVienTheoKhoa(string maKhoa)
         {
             string procName = "sp_SinhVien_TheoKhoa";
@@ -64,7 +59,6 @@ namespace Lab07_ADONET_Connection.DAL
             return MySqlHelper.ExecuteQuery(procName, CommandType.StoredProcedure, p);
         }
 
-        // Bài 6: Tìm sinh viên theo mã
         public DataTable TimSinhVienTheoMa(string maSV)
         {
             string sql = "SELECT * FROM SinhVien WHERE MaSV = @MaSV";
@@ -74,7 +68,6 @@ namespace Lab07_ADONET_Connection.DAL
             return MySqlHelper.ExecuteQuery(sql, CommandType.Text, p);
         }
 
-        // Bài 7: Thống kê điểm cao nhất theo khoa (Xử lý DBNull)
         public double ThongKeDiemCaoNhat(string maKhoa)
         {
             string sql = "SELECT MAX(DiemTB) FROM SinhVien WHERE MaKhoa = @MaKhoa";
@@ -86,7 +79,6 @@ namespace Lab07_ADONET_Connection.DAL
             return Convert.ToDouble(res);
         }
 
-        // Bài 8: Xóa sinh viên
         public int XoaSinhVien(string maSV)
         {
             string sql = "DELETE FROM SinhVien WHERE MaSV = @MaSV";
@@ -96,7 +88,6 @@ namespace Lab07_ADONET_Connection.DAL
             return MySqlHelper.ExecuteNonQuery(sql, CommandType.Text, p);
         }
 
-        // Bài 9: Gọi Stored Procedure thêm sinh viên & Tham số đầu ra (OUTPUT)
         public int ThemSinhVienCoOutput(string maSV, string hoTen, DateTime ngaySinh, bool gioiTinh, string maKhoa, double diemTB, string email, out int tongSoSV)
         {
             tongSoSV = 0;
@@ -129,8 +120,7 @@ namespace Lab07_ADONET_Connection.DAL
         }
         #endregion
 
-        #region HÀM XỬ LÝ CHO LAB 09
-        // Bài 1: Nạp MySqlDataReader vào DataTable (JOIN SinhVien với Khoa)
+        #region HÀM XỬ LÝ CHO LAB 09 (DATAREADER SEARCH, FILTER & PAGINATION)
         public DataTable LoadStudents()
         {
             string sql = @"SELECT sv.MaSV, sv.HoTen, sv.NgaySinh,
@@ -142,7 +132,6 @@ namespace Lab07_ADONET_Connection.DAL
             return MySqlHelper.ExecuteQuery(sql);
         }
 
-        // Bài 2: Tìm kiếm gần đúng theo họ tên (LIKE @Keyword)
         public DataTable SearchByName(string keyword)
         {
             string sql = @"SELECT sv.MaSV, sv.HoTen, k.TenKhoa, sv.DiemTB, sv.NgaySinh
@@ -156,7 +145,6 @@ namespace Lab07_ADONET_Connection.DAL
             return MySqlHelper.ExecuteQuery(sql, CommandType.Text, p);
         }
 
-        // Bài 3: Lọc theo khoa và khoảng điểm (BETWEEN @Min AND @Max)
         public DataTable FilterByKhoaAndDiem(string maKhoa, double min, double max)
         {
             StringBuilder sql = new StringBuilder(@"SELECT sv.MaSV, sv.HoTen, k.TenKhoa, sv.DiemTB
@@ -178,7 +166,6 @@ namespace Lab07_ADONET_Connection.DAL
             return MySqlHelper.ExecuteQuery(sql.ToString(), CommandType.Text, pList.ToArray());
         }
 
-        // Bài 4: Phân trang Server-side bằng MySQL (LIMIT @PageSize OFFSET @Offset)
         public DataTable GetStudentsPaged(int pageIndex, int pageSize, out int totalRecords)
         {
             string countSql = "SELECT COUNT(*) FROM SinhVien";
@@ -200,7 +187,6 @@ namespace Lab07_ADONET_Connection.DAL
             return MySqlHelper.ExecuteQuery(sql, CommandType.Text, p);
         }
 
-        // Bài 6, 7, 8: Tìm kiếm đa tiêu chí, Lọc theo tuổi & Sắp xếp động an toàn (Whitelist)
         public DataTable SearchMultiCriteria(string maSV, string hoTen, string maKhoa, int? gioiTinh,
                                              double? minDiem, double? maxDiem, int? minTuoi, int? maxTuoi,
                                              string sortColumn, bool isAsc, int pageIndex, int pageSize, out int totalRecords)
@@ -271,6 +257,55 @@ namespace Lab07_ADONET_Connection.DAL
             pList.Add(new MySqlParameter("@Offset", (pageIndex - 1) * pageSize));
 
             return MySqlHelper.ExecuteQuery(sql.ToString(), CommandType.Text, pList.ToArray());
+        }
+        #endregion
+
+        #region HÀM XỬ LÝ CHO LAB 10 (DISCONNECTED ADO.NET)
+        public DataTable GetStudentTableDisconnected()
+        {
+            DataTable table = new DataTable("SinhVien");
+            using (MySqlConnection conn = DbConnectionFactory.Create())
+            using (MySqlDataAdapter adapter = new MySqlDataAdapter("SELECT * FROM SinhVien ORDER BY MaSV", conn))
+            {
+                adapter.Fill(table);
+            }
+            return table;
+        }
+
+        public DataSet GetQLSVDataSet()
+        {
+            DataSet ds = new DataSet("QLSinhVien");
+            using (MySqlConnection conn = DbConnectionFactory.Create())
+            {
+                MySqlDataAdapter adapterKhoa = new MySqlDataAdapter("SELECT * FROM Khoa", conn);
+                adapterKhoa.Fill(ds, "Khoa");
+
+                MySqlDataAdapter adapterSV = new MySqlDataAdapter("SELECT * FROM SinhVien", conn);
+                adapterSV.Fill(ds, "SinhVien");
+            }
+
+            if (ds.Tables["Khoa"].Columns.Contains("MaKhoa"))
+                ds.Tables["Khoa"].PrimaryKey = new DataColumn[] { ds.Tables["Khoa"].Columns["MaKhoa"] };
+            if (ds.Tables["SinhVien"].Columns.Contains("MaSV"))
+                ds.Tables["SinhVien"].PrimaryKey = new DataColumn[] { ds.Tables["SinhVien"].Columns["MaSV"] };
+
+            if (!ds.Relations.Contains("FK_Khoa_SinhVien"))
+            {
+                DataRelation relation = new DataRelation(
+                    "FK_Khoa_SinhVien",
+                    ds.Tables["Khoa"].Columns["MaKhoa"],
+                    ds.Tables["SinhVien"].Columns["MaKhoa"]);
+                ds.Relations.Add(relation);
+            }
+
+            return ds;
+        }
+
+        public MySqlDataAdapter GetStudentAdapterForUpdate(MySqlConnection conn, out MySqlCommandBuilder builder)
+        {
+            MySqlDataAdapter adapter = new MySqlDataAdapter("SELECT * FROM SinhVien", conn);
+            builder = new MySqlCommandBuilder(adapter);
+            return adapter;
         }
         #endregion
     }
