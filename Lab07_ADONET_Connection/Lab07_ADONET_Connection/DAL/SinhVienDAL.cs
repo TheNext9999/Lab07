@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Text;
 using MySql.Data.MySqlClient;
+using Lab07_ADONET_Connection.DTO;
 
 namespace Lab07_ADONET_Connection.DAL
 {
@@ -306,6 +307,81 @@ namespace Lab07_ADONET_Connection.DAL
             MySqlDataAdapter adapter = new MySqlDataAdapter("SELECT * FROM SinhVien", conn);
             builder = new MySqlCommandBuilder(adapter);
             return adapter;
+        }
+        #endregion
+
+        #region HÀM XỬ LÝ CHO LAB 11 (STORED PROCEDURES CRUD)
+        public int Insert(SinhVienDTO dto)
+        {
+            using (MySqlConnection conn = DbConnectionFactory.Create())
+            using (MySqlCommand cmd = new MySqlCommand("sp_SinhVien_Insert", conn))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("p_MaSV", dto.MaSV);
+                cmd.Parameters.AddWithValue("p_HoTen", dto.HoTen);
+                cmd.Parameters.AddWithValue("p_NgaySinh", dto.NgaySinh);
+                cmd.Parameters.AddWithValue("p_GioiTinh", dto.GioiTinh ? 1 : 0);
+                cmd.Parameters.AddWithValue("p_MaKhoa", dto.MaKhoa);
+                cmd.Parameters.AddWithValue("p_DiemTB", dto.DiemTB);
+                cmd.Parameters.AddWithValue("p_Email", string.IsNullOrWhiteSpace(dto.Email) ? (object)DBNull.Value : dto.Email);
+
+                conn.Open();
+                return cmd.ExecuteNonQuery();
+            }
+        }
+
+        public int Update(SinhVienDTO dto)
+        {
+            using (MySqlConnection conn = DbConnectionFactory.Create())
+            using (MySqlCommand cmd = new MySqlCommand("sp_SinhVien_Update", conn))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("p_MaSV", dto.MaSV);
+                cmd.Parameters.AddWithValue("p_HoTen", dto.HoTen);
+                cmd.Parameters.AddWithValue("p_NgaySinh", dto.NgaySinh);
+                cmd.Parameters.AddWithValue("p_GioiTinh", dto.GioiTinh ? 1 : 0);
+                cmd.Parameters.AddWithValue("p_MaKhoa", dto.MaKhoa);
+                cmd.Parameters.AddWithValue("p_DiemTB", dto.DiemTB);
+                cmd.Parameters.AddWithValue("p_Email", string.IsNullOrWhiteSpace(dto.Email) ? (object)DBNull.Value : dto.Email);
+
+                conn.Open();
+                return cmd.ExecuteNonQuery();
+            }
+        }
+
+        public int DeletePhysical(string maSV)
+        {
+            using (MySqlConnection conn = DbConnectionFactory.Create())
+            using (MySqlCommand cmd = new MySqlCommand("sp_SinhVien_Delete", conn))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("p_MaSV", maSV);
+
+                conn.Open();
+                return cmd.ExecuteNonQuery();
+            }
+        }
+
+        public int SoftDelete(string maSV)
+        {
+            using (MySqlConnection conn = DbConnectionFactory.Create())
+            using (MySqlCommand cmd = new MySqlCommand("sp_SinhVien_SoftDelete", conn))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("p_MaSV", maSV);
+
+                conn.Open();
+                return cmd.ExecuteNonQuery();
+            }
+        }
+
+        public DataTable Search(string keyword, string maKhoa)
+        {
+            MySqlParameter[] p = {
+                new MySqlParameter("p_Keyword", MySqlDbType.VarChar, 100) { Value = string.IsNullOrWhiteSpace(keyword) ? (object)DBNull.Value : keyword.Trim() },
+                new MySqlParameter("p_MaKhoa", MySqlDbType.VarChar, 10) { Value = string.IsNullOrWhiteSpace(maKhoa) ? (object)DBNull.Value : maKhoa }
+            };
+            return MySqlHelper.ExecuteQuery("sp_SinhVien_Search", CommandType.StoredProcedure, p);
         }
         #endregion
     }
