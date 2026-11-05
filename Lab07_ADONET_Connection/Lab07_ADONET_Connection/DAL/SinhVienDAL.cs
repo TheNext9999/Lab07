@@ -384,5 +384,34 @@ namespace Lab07_ADONET_Connection.DAL
             return MySqlHelper.ExecuteQuery("sp_SinhVien_Search", CommandType.StoredProcedure, p);
         }
         #endregion
+
+        // Bổ sung vào SinhVienDAL.cs
+        public int Insert(SinhVienDTO dto, MySqlConnection conn, MySqlTransaction tx)
+        {
+            string sql = @"INSERT INTO SinhVien (MaSV, HoTen, NgaySinh, GioiTinh, MaKhoa, DiemTB, Email, IsActive)
+                   VALUES (@MaSV, @HoTen, @NgaySinh, @GioiTinh, @MaKhoa, @DiemTB, @Email, 1)";
+            using (MySqlCommand cmd = new MySqlCommand(sql, conn, tx))
+            {
+                cmd.Parameters.AddWithValue("@MaSV", dto.MaSV);
+                cmd.Parameters.AddWithValue("@HoTen", dto.HoTen);
+                cmd.Parameters.AddWithValue("@NgaySinh", dto.NgaySinh);
+                cmd.Parameters.AddWithValue("@GioiTinh", dto.GioiTinh ? 1 : 0);
+                cmd.Parameters.AddWithValue("@MaKhoa", dto.MaKhoa);
+                cmd.Parameters.AddWithValue("@DiemTB", dto.DiemTB);
+                cmd.Parameters.AddWithValue("@Email", string.IsNullOrWhiteSpace(dto.Email) ? (object)DBNull.Value : dto.Email);
+                return cmd.ExecuteNonQuery();
+            }
+        }
+
+        public int UpdateDepartment(string maSV, string maKhoaMoi, MySqlConnection conn, MySqlTransaction tx)
+        {
+            string sql = "UPDATE SinhVien SET MaKhoa = @MaKhoaMoi WHERE MaSV = @MaSV";
+            using (MySqlCommand cmd = new MySqlCommand(sql, conn, tx))
+            {
+                cmd.Parameters.AddWithValue("@MaKhoaMoi", maKhoaMoi);
+                cmd.Parameters.AddWithValue("@MaSV", maSV);
+                return cmd.ExecuteNonQuery();
+            }
+        }
     }
 }

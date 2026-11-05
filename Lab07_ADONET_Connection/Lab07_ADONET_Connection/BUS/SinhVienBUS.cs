@@ -114,5 +114,113 @@ namespace Lab07_ADONET_Connection.BUS
             }
         }
         #endregion
+        // Bổ sung các phương thức Transaction vào SinhVienBUS.cs
+        private DangKyDAL dangKyDal = new DangKyDAL();
+
+        // Bài 3 & 4: Transaction Thêm SinhVien & Đăng ký ban đầu (Kiểm chứng Rollback)
+        public bool AddStudentWithEnrollments(SinhVienDTO svDto, System.Collections.Generic.List<DangKyDTO> dsDangKy)
+        {
+            Validate(svDto); // Kiểm tra nghiệp vụ trước khi mở kết nối CSDL
+
+            using (MySqlConnection conn = DbConnectionFactory.Create())
+            {
+                conn.Open();
+                using (MySqlTransaction tx = conn.BeginTransaction())
+                {
+                    try
+                    {
+                        // Bước 1: Thêm sinh viên
+                        dal.Insert(svDto, conn, tx);
+
+                        // Bước 2: Thêm danh sách môn đăng ký
+                        foreach (var dk in dsDangKy)
+                        {
+                            dangKyDal.Insert(dk, conn, tx);
+                        }
+
+                        tx.Commit(); // Hoàn tất giao dịch thành công
+                        return true;
+                    }
+                    catch (Exception ex)
+                    {
+                        tx.Rollback(); // Hoàn tác 100% dữ liệu nếu gặp bất kỳ lỗi nào
+                        throw new Exception("Giao dịch THẤT BẠI và đã ROLLBACK toàn bộ: " + ex.Message);
+                    }
+                }
+            }
+        }
+
+        // Bài 6: Chuyển Khoa & Ghi nhật ký vào LichSuChuyenKhoa
+        public bool TransferDepartment(string maSV, string maKhoaCu, string maKhoaMoi, string lyDo)
+        {
+            if (string.IsNullOrEmpty(maSV) || string.IsNullOrEmpty(maKhoaMoi))
+                throw new ArgumentException("Thông tin chuyển khoa không hợp lệ.");
+
+            using (MySqlConnection conn = DbConnectionFactory.Create())
+            {
+                conn.Open();
+                using (MySqlTransaction tx = conn.BeginTransaction())
+                {
+                    try
+                    {
+                        // 1. Cập nhật mã khoa mới cho SinhVien
+                        dal.UpdateDepartment(maSV, maKhoaMoi, conn, tx);
+
+                        // 2. Thêm lịch sử chuyển khoa
+                        string sqlLog = @"INSERT INTO LichSuChuyenKhoa (MaSV, MaKhoaCu, MaKhoaMoi, LyDo) VALUES (@MaSV, @MaKhoaCu, @MaKhoaMoi, @LyDo)";
+                        using (MySqlCommand cmd = new MySqlCommand(sqlLog, conn, tx))
+                        {
+                            cmd.Parameters.AddWithValue("@MaSV", maSV);
+                            cmd.Parameters.AddWithValue("@MaKhoaCu", maKhoaCu);
+                            cmd.Parameters.AddWithValue("@MaKhoaMoi", maKhoaMoi);
+                            cmd.Parameters.AddWithValue("@LyDo", lyDo);
+                            cmd.ExecuteNonQuery();
+                        }
+
+                        tx.Commit();
+                        return true;
+                    }
+                    catch
+                    {
+                        tx.Rollback();
+                        throw;
+                    }
+                }
+            }
+        }
+
+        // Bài 8: Cập nhật điểm hàng loạt trong Transaction (Rollback nếu điểm không hợp lệ)
+        public bool BulkUpdateGrades(System.Collections.Generic.List<DangKyDTO> dsCapNhat)
+        {
+            // Kiểm tra validate trước
+            foreach (var dk in dsCapNhat)
+            {
+                if (dk.Diem < 0 || dk.Diem > 10)
+                    throw new ArgumentException($"Điểm [{dk.Diem}] của sinh viên [{dk.MaSV}] môn [{dk.MaHP}] không hợp lệ (Phải thuộc [0, 10]).");
+            }
+
+            using (MySqlConnection conn = DbConnectionFactory.Create())
+            {
+                conn.Open();
+                using (MySqlTransaction tx = conn.BeginTransaction())
+                {
+                    try
+                    {
+                        foreach (var dk in dsCapNhat)
+                        {
+                            dangKyDal.UpdateGrade(dk.MaSV, dk.MaHP, dk.HocKy, dk.Diem.Value, conn, tx);
+                        }
+
+                        tx.Commit();
+                        return true;
+                    }
+                    catch
+                    {
+                        tx.Rollback();
+                        throw;
+                    }
+                }
+            }
+        }
     }
 }

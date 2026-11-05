@@ -94,10 +94,15 @@
   <ItemGroup>
     <Compile Include="BUS\KhoaBUS.cs" />
     <Compile Include="BUS\SinhVienBUS.cs" />
+    <Compile Include="DAL\DangKyDAL.cs" />
     <Compile Include="DAL\DbConnectionFactory.cs" />
+    <Compile Include="DAL\HocPhanDAL.cs" />
     <Compile Include="DAL\KhoaDAL.cs" />
     <Compile Include="DAL\MySqlHelper.cs" />
     <Compile Include="DAL\SinhVienDAL.cs" />
+    <Compile Include="DTO\DangKyDTO.cs" />
+    <Compile Include="DTO\HocPhanDTO.cs" />
+    <Compile Include="DTO\LichSuChuyenKhoaDTO.cs" />
     <Compile Include="DTO\SinhVienDTO.cs" />
     <Compile Include="GUI\frmKiemTraKetNoi.cs">
       <SubType>Form</SubType>
@@ -128,6 +133,12 @@
     </Compile>
     <Compile Include="GUI\frmLab11.Designer.cs">
       <DependentUpon>frmLab11.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\frmLab12.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\frmLab12.Designer.cs">
+      <DependentUpon>frmLab12.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

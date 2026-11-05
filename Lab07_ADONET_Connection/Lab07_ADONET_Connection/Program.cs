@@ -20,7 +20,8 @@ namespace Lab07_ADONET_Connection
             //Application.Run(new Lab07_ADONET_Connection.GUI.frmLab08());
             //Application.Run(new Lab07_ADONET_Connection.GUI.frmLab09());
             //Application.Run(new Lab07_ADONET_Connection.GUI.frmLab10());
-            Application.Run(new Lab07_ADONET_Connection.GUI.frmLab11());
+            //Application.Run(new Lab07_ADONET_Connection.GUI.frmLab11());
+            Application.Run(new Lab07_ADONET_Connection.GUI.frmLab12());
         }
     }
 }
