@@ -1,5 +1,5 @@
 
-BÁO CÁO BÀI TẬP LAB 07: KẾT NỐI CSDL MYSQL BẰNG ADO.NET (WINFORMS)
+BÁO CÁO BÀI TẬP LAB 07 ĐẾN lAB13: KẾT NỐI CSDL MYSQL BẰNG ADO.NET (WINFORMS)
 ====================================================================
 
 1. THÔNG TIN INSTANCE MYSQL SERVER
