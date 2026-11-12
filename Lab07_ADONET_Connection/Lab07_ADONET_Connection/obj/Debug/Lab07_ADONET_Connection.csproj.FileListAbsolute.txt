@@ -57,3 +57,5 @@ D:\BT Classroom Lab\Lab07\Lab07_ADONET_Connection\Lab07_ADONET_Connection\bin\De
 D:\BT Classroom Lab\Lab07\Lab07_ADONET_Connection\Lab07_ADONET_Connection\bin\Debug\CrystalDecisions.ReportAppServer.ObjectFactory.dll
 D:\BT Classroom Lab\Lab07\Lab07_ADONET_Connection\Lab07_ADONET_Connection\bin\Debug\CrystalDecisions.ReportAppServer.CommonControls.dll
 D:\BT Classroom Lab\Lab07\Lab07_ADONET_Connection\Lab07_ADONET_Connection\bin\Debug\stdole.dll
+D:\BT Classroom Lab\Lab07\Lab07_ADONET_Connection\Lab07_ADONET_Connection\bin\Debug\Reports\CrystalReportSinhVienTheoKhoa.rpt
+D:\BT Classroom Lab\Lab07\Lab07_ADONET_Connection\Lab07_ADONET_Connection\bin\Debug\Reports\CrystalReportSinhVienTheoKhoa.cs

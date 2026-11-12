@@ -3,12 +3,12 @@
   "WorkspaceRootPath": "D:\\BT Classroom Lab\\Lab07\\Lab07_ADONET_Connection\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{9B3A4973-1F48-47F4-A1FE-784A1DC19ADE}|Lab07_ADONET_Connection\\Lab07_ADONET_Connection.csproj|D:\\BT Classroom Lab\\Lab07\\Lab07_ADONET_Connection\\lab07_adonet_connection\\gui\\frmbaocaosinhvien.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{9B3A4973-1F48-47F4-A1FE-784A1DC19ADE}|Lab07_ADONET_Connection\\Lab07_ADONET_Connection.csproj|solutionrelative:lab07_adonet_connection\\gui\\frmbaocaosinhvien.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{9B3A4973-1F48-47F4-A1FE-784A1DC19ADE}|Lab07_ADONET_Connection\\Lab07_ADONET_Connection.csproj|d:\\bt classroom lab\\lab07\\lab07_adonet_connection\\lab07_adonet_connection\\gui\\frmlab14_trungtambaocao.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9B3A4973-1F48-47F4-A1FE-784A1DC19ADE}|Lab07_ADONET_Connection\\Lab07_ADONET_Connection.csproj|solutionrelative:lab07_adonet_connection\\gui\\frmlab14_trungtambaocao.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{9B3A4973-1F48-47F4-A1FE-784A1DC19ADE}|Lab07_ADONET_Connection\\Lab07_ADONET_Connection.csproj|d:\\bt classroom lab\\lab07\\lab07_adonet_connection\\lab07_adonet_connection\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{9B3A4973-1F48-47F4-A1FE-784A1DC19ADE}|Lab07_ADONET_Connection\\Lab07_ADONET_Connection.csproj|solutionrelative:lab07_adonet_connection\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{9B3A4973-1F48-47F4-A1FE-784A1DC19ADE}|Lab07_ADONET_Connection\\Lab07_ADONET_Connection.csproj|d:\\bt classroom lab\\lab07\\lab07_adonet_connection\\lab07_adonet_connection\\gui\\frmbaocaosinhvien.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9B3A4973-1F48-47F4-A1FE-784A1DC19ADE}|Lab07_ADONET_Connection\\Lab07_ADONET_Connection.csproj|solutionrelative:lab07_adonet_connection\\gui\\frmbaocaosinhvien.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{9B3A4973-1F48-47F4-A1FE-784A1DC19ADE}|Lab07_ADONET_Connection\\Lab07_ADONET_Connection.csproj|D:\\BT Classroom Lab\\Lab07\\Lab07_ADONET_Connection\\lab07_adonet_connection\\gui\\frmmain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -25,10 +25,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{9B3A4973-1F48-47F4-A1FE-784A1DC19ADE}|Lab07_ADONET_Connection\\Lab07_ADONET_Connection.csproj|D:\\BT Classroom Lab\\Lab07\\Lab07_ADONET_Connection\\lab07_adonet_connection\\gui\\frmbaocaosinhvien.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
       "RelativeMoniker": "D:0:0:{9B3A4973-1F48-47F4-A1FE-784A1DC19ADE}|Lab07_ADONET_Connection\\Lab07_ADONET_Connection.csproj|solutionrelative:lab07_adonet_connection\\gui\\frmbaocaosinhvien.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{9B3A4973-1F48-47F4-A1FE-784A1DC19ADE}|Lab07_ADONET_Connection\\Lab07_ADONET_Connection.csproj|D:\\BT Classroom Lab\\Lab07\\Lab07_ADONET_Connection\\lab07_adonet_connection\\dal\\baocaodal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{9B3A4973-1F48-47F4-A1FE-784A1DC19ADE}|Lab07_ADONET_Connection\\Lab07_ADONET_Connection.csproj|solutionrelative:lab07_adonet_connection\\dal\\baocaodal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -38,32 +34,20 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "Program.cs",
-              "DocumentMoniker": "D:\\BT Classroom Lab\\Lab07\\Lab07_ADONET_Connection\\Lab07_ADONET_Connection\\Program.cs",
-              "RelativeDocumentMoniker": "Lab07_ADONET_Connection\\Program.cs",
-              "ToolTip": "D:\\BT Classroom Lab\\Lab07\\Lab07_ADONET_Connection\\Lab07_ADONET_Connection\\Program.cs",
-              "RelativeToolTip": "Lab07_ADONET_Connection\\Program.cs",
-              "ViewState": "AgIAAAkAAAAAAAAAAAAAABMAAABKAAAAAAAAAA==",
+              "DocumentIndex": 0,
+              "Title": "frmLab14_TrungTamBaoCao.cs",
+              "DocumentMoniker": "D:\\BT Classroom Lab\\Lab07\\Lab07_ADONET_Connection\\Lab07_ADONET_Connection\\GUI\\frmLab14_TrungTamBaoCao.cs",
+              "RelativeDocumentMoniker": "Lab07_ADONET_Connection\\GUI\\frmLab14_TrungTamBaoCao.cs",
+              "ToolTip": "D:\\BT Classroom Lab\\Lab07\\Lab07_ADONET_Connection\\Lab07_ADONET_Connection\\GUI\\frmLab14_TrungTamBaoCao.cs",
+              "RelativeToolTip": "Lab07_ADONET_Connection\\GUI\\frmLab14_TrungTamBaoCao.cs",
+              "ViewState": "AgIAAMUAAAAAAAAAAAAqwNAAAAAmAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-11-10T09:20:05.823Z",
+              "WhenOpened": "2026-11-12T10:38:19.243Z",
               "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "frmMain.cs",
-              "DocumentMoniker": "D:\\BT Classroom Lab\\Lab07\\Lab07_ADONET_Connection\\Lab07_ADONET_Connection\\GUI\\frmMain.cs",
-              "RelativeDocumentMoniker": "Lab07_ADONET_Connection\\GUI\\frmMain.cs",
-              "ToolTip": "D:\\BT Classroom Lab\\Lab07\\Lab07_ADONET_Connection\\Lab07_ADONET_Connection\\GUI\\frmMain.cs",
-              "RelativeToolTip": "Lab07_ADONET_Connection\\GUI\\frmMain.cs",
-              "ViewState": "AgIAAAcAAAAAAAAAAAA1wBAAAAAvAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-11-10T09:19:48.428Z"
             },
             {
               "$type": "Document",
@@ -90,7 +74,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "frmBaoCaoSinhVien.Designer.cs",
               "DocumentMoniker": "D:\\BT Classroom Lab\\Lab07\\Lab07_ADONET_Connection\\Lab07_ADONET_Connection\\GUI\\frmBaoCaoSinhVien.Designer.cs",
               "RelativeDocumentMoniker": "Lab07_ADONET_Connection\\GUI\\frmBaoCaoSinhVien.Designer.cs",
@@ -103,6 +87,18 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "frmMain.cs",
+              "DocumentMoniker": "D:\\BT Classroom Lab\\Lab07\\Lab07_ADONET_Connection\\Lab07_ADONET_Connection\\GUI\\frmMain.cs",
+              "RelativeDocumentMoniker": "Lab07_ADONET_Connection\\GUI\\frmMain.cs",
+              "ToolTip": "D:\\BT Classroom Lab\\Lab07\\Lab07_ADONET_Connection\\Lab07_ADONET_Connection\\GUI\\frmMain.cs",
+              "RelativeToolTip": "Lab07_ADONET_Connection\\GUI\\frmMain.cs",
+              "ViewState": "AgIAAAcAAAAAAAAAAAA1wBAAAAAvAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-11-10T09:19:48.428Z"
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 5,
               "Title": "frmBaoCaoSinhVien.cs [Design]",
               "DocumentMoniker": "D:\\BT Classroom Lab\\Lab07\\Lab07_ADONET_Connection\\Lab07_ADONET_Connection\\GUI\\frmBaoCaoSinhVien.cs",
@@ -111,18 +107,6 @@
               "RelativeToolTip": "Lab07_ADONET_Connection\\GUI\\frmBaoCaoSinhVien.cs [Design]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-11-10T09:17:52.487Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "BaoCaoDAL.cs",
-              "DocumentMoniker": "D:\\BT Classroom Lab\\Lab07\\Lab07_ADONET_Connection\\Lab07_ADONET_Connection\\DAL\\BaoCaoDAL.cs",
-              "RelativeDocumentMoniker": "Lab07_ADONET_Connection\\DAL\\BaoCaoDAL.cs",
-              "ToolTip": "D:\\BT Classroom Lab\\Lab07\\Lab07_ADONET_Connection\\Lab07_ADONET_Connection\\DAL\\BaoCaoDAL.cs",
-              "RelativeToolTip": "Lab07_ADONET_Connection\\DAL\\BaoCaoDAL.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAvAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-11-10T09:17:12.666Z"
             }
           ]
         },
