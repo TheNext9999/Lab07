@@ -1,329 +1,193 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Text;
-using MySql.Data.MySqlClient;
+using System.Reflection;
 using Lab07_ADONET_Connection.DTO;
+using MySql.Data.MySqlClient;
 
 namespace Lab07_ADONET_Connection.DAL
 {
     public class SinhVienDAL
     {
-        #region HÀM XỬ LÝ CHO LAB 08 (CONNECTED ADO.NET)
+        public DataTable GetAllSinhVien()
+        {
+            DataTable dt = new DataTable("SinhVien");
+            string sql = @"SELECT sv.MaSV, sv.HoTen, sv.NgaySinh, sv.GioiTinh, sv.MaKhoa, k.TenKhoa, sv.DiemTB, sv.Email
+                           FROM SinhVien sv
+                           LEFT JOIN Khoa k ON sv.MaKhoa = k.MaKhoa
+                           ORDER BY sv.MaSV";
+            using (MySqlConnection conn = DbConnectionFactory.Create())
+            using (MySqlDataAdapter da = new MySqlDataAdapter(sql, conn))
+            {
+                da.Fill(dt);
+            }
+            return dt;
+        }
+
+        public DataTable GetAll()
+        {
+            return GetAllSinhVien();
+        }
+
         public int DemSoSinhVien()
         {
-            string sql = "SELECT COUNT(*) FROM SinhVien";
-            object res = MySqlHelper.ExecuteScalar(sql);
-            return Convert.ToInt32(res);
+            using (MySqlConnection conn = DbConnectionFactory.Create())
+            using (MySqlCommand cmd = new MySqlCommand("SELECT COUNT(*) FROM SinhVien", conn))
+            {
+                conn.Open();
+                return Convert.ToInt32(cmd.ExecuteScalar());
+            }
         }
 
-        public DataTable LayDanhSachSinhVien()
+        public double ThongKeDiemCaoNhat(string maKhoa = "")
         {
-            string sql = "SELECT MaSV, HoTen, DiemTB FROM SinhVien ORDER BY HoTen";
-            return MySqlHelper.ExecuteQuery(sql);
-        }
+            string sql = string.IsNullOrWhiteSpace(maKhoa)
+                ? "SELECT IFNULL(MAX(DiemTB), 0) FROM SinhVien"
+                : "SELECT IFNULL(MAX(DiemTB), 0) FROM SinhVien WHERE MaKhoa = @MaKhoa";
 
-        public int ThemSinhVien(string maSV, string hoTen, DateTime ngaySinh, bool gioiTinh, string maKhoa, double diemTB, string email)
-        {
-            string sql = @"INSERT INTO SinhVien (MaSV, HoTen, NgaySinh, GioiTinh, MaKhoa, DiemTB, Email)
-                           VALUES (@MaSV, @HoTen, @NgaySinh, @GioiTinh, @MaKhoa, @DiemTB, @Email)";
-
-            MySqlParameter[] p = {
-                new MySqlParameter("@MaSV", MySqlDbType.VarChar, 15) { Value = maSV },
-                new MySqlParameter("@HoTen", MySqlDbType.VarChar, 100) { Value = hoTen },
-                new MySqlParameter("@NgaySinh", MySqlDbType.Date) { Value = ngaySinh },
-                new MySqlParameter("@GioiTinh", MySqlDbType.Byte) { Value = gioiTinh ? 1 : 0 },
-                new MySqlParameter("@MaKhoa", MySqlDbType.VarChar, 10) { Value = maKhoa },
-                new MySqlParameter("@DiemTB", MySqlDbType.Decimal) { Value = diemTB },
-                new MySqlParameter("@Email", MySqlDbType.VarChar, 100) { Value = string.IsNullOrWhiteSpace(email) ? (object)DBNull.Value : email }
-            };
-
-            return MySqlHelper.ExecuteNonQuery(sql, CommandType.Text, p);
-        }
-
-        public int CapNhatDiem(string maSV, double diemTB)
-        {
-            string sql = "UPDATE SinhVien SET DiemTB = @DiemTB WHERE MaSV = @MaSV";
-            MySqlParameter[] p = {
-                new MySqlParameter("@DiemTB", MySqlDbType.Decimal) { Value = diemTB },
-                new MySqlParameter("@MaSV", MySqlDbType.VarChar, 15) { Value = maSV }
-            };
-            return MySqlHelper.ExecuteNonQuery(sql, CommandType.Text, p);
-        }
-
-        public DataTable LaySinhVienTheoKhoa(string maKhoa)
-        {
-            string procName = "sp_SinhVien_TheoKhoa";
-            MySqlParameter[] p = {
-                new MySqlParameter("p_MaKhoa", MySqlDbType.VarChar, 10) { Value = maKhoa }
-            };
-            return MySqlHelper.ExecuteQuery(procName, CommandType.StoredProcedure, p);
+            using (MySqlConnection conn = DbConnectionFactory.Create())
+            using (MySqlCommand cmd = new MySqlCommand(sql, conn))
+            {
+                if (!string.IsNullOrWhiteSpace(maKhoa))
+                    cmd.Parameters.AddWithValue("@MaKhoa", maKhoa.Trim());
+                conn.Open();
+                return Convert.ToDouble(cmd.ExecuteScalar());
+            }
         }
 
         public DataTable TimSinhVienTheoMa(string maSV)
         {
-            string sql = "SELECT * FROM SinhVien WHERE MaSV = @MaSV";
-            MySqlParameter[] p = {
-                new MySqlParameter("@MaSV", MySqlDbType.VarChar, 15) { Value = maSV }
-            };
-            return MySqlHelper.ExecuteQuery(sql, CommandType.Text, p);
-        }
-
-        public double ThongKeDiemCaoNhat(string maKhoa)
-        {
-            string sql = "SELECT MAX(DiemTB) FROM SinhVien WHERE MaKhoa = @MaKhoa";
-            MySqlParameter[] p = {
-                new MySqlParameter("@MaKhoa", MySqlDbType.VarChar, 10) { Value = maKhoa }
-            };
-            object res = MySqlHelper.ExecuteScalar(sql, CommandType.Text, p);
-            if (res == null || res == DBNull.Value) return 0.0;
-            return Convert.ToDouble(res);
-        }
-
-        public int XoaSinhVien(string maSV)
-        {
-            string sql = "DELETE FROM SinhVien WHERE MaSV = @MaSV";
-            MySqlParameter[] p = {
-                new MySqlParameter("@MaSV", MySqlDbType.VarChar, 15) { Value = maSV }
-            };
-            return MySqlHelper.ExecuteNonQuery(sql, CommandType.Text, p);
-        }
-
-        public int ThemSinhVienCoOutput(string maSV, string hoTen, DateTime ngaySinh, bool gioiTinh, string maKhoa, double diemTB, string email, out int tongSoSV)
-        {
-            tongSoSV = 0;
+            DataTable dt = new DataTable();
+            string sql = @"SELECT sv.MaSV, sv.HoTen, sv.NgaySinh, sv.GioiTinh, sv.MaKhoa, k.TenKhoa, sv.DiemTB, sv.Email
+                           FROM SinhVien sv
+                           LEFT JOIN Khoa k ON sv.MaKhoa = k.MaKhoa
+                           WHERE sv.MaSV = @MaSV";
             using (MySqlConnection conn = DbConnectionFactory.Create())
-            using (MySqlCommand cmd = new MySqlCommand("sp_ThemSinhVien_DemSoLuong", conn))
+            using (MySqlCommand cmd = new MySqlCommand(sql, conn))
             {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("p_MaSV", maSV);
-                cmd.Parameters.AddWithValue("p_HoTen", hoTen);
-                cmd.Parameters.AddWithValue("p_NgaySinh", ngaySinh);
-                cmd.Parameters.AddWithValue("p_GioiTinh", gioiTinh ? 1 : 0);
-                cmd.Parameters.AddWithValue("p_MaKhoa", maKhoa);
-                cmd.Parameters.AddWithValue("p_DiemTB", diemTB);
-                cmd.Parameters.AddWithValue("p_Email", string.IsNullOrWhiteSpace(email) ? (object)DBNull.Value : email);
-
-                MySqlParameter pOut = new MySqlParameter("p_TongSoSV", MySqlDbType.Int32)
+                cmd.Parameters.AddWithValue("@MaSV", maSV);
+                using (MySqlDataAdapter da = new MySqlDataAdapter(cmd))
                 {
-                    Direction = ParameterDirection.Output
-                };
-                cmd.Parameters.Add(pOut);
-
-                conn.Open();
-                int rows = cmd.ExecuteNonQuery();
-                if (pOut.Value != null && pOut.Value != DBNull.Value)
-                {
-                    tongSoSV = Convert.ToInt32(pOut.Value);
+                    da.Fill(dt);
                 }
-                return rows;
             }
-        }
-        #endregion
-
-        #region HÀM XỬ LÝ CHO LAB 09 (DATAREADER SEARCH, FILTER & PAGINATION)
-        public DataTable LoadStudents()
-        {
-            string sql = @"SELECT sv.MaSV, sv.HoTen, sv.NgaySinh,
-                           CASE sv.GioiTinh WHEN 1 THEN 'Nam' ELSE 'Nữ' END AS GioiTinhText,
-                           k.TenKhoa, sv.DiemTB, sv.Email, sv.MaKhoa, sv.GioiTinh
-                           FROM SinhVien sv 
-                           JOIN Khoa k ON sv.MaKhoa = k.MaKhoa
-                           ORDER BY sv.HoTen";
-            return MySqlHelper.ExecuteQuery(sql);
+            return dt;
         }
 
-        public DataTable SearchByName(string keyword)
+        public DataTable SearchSinhVien(string keyword)
         {
-            string sql = @"SELECT sv.MaSV, sv.HoTen, k.TenKhoa, sv.DiemTB, sv.NgaySinh
-                           FROM SinhVien sv 
-                           JOIN Khoa k ON sv.MaKhoa = k.MaKhoa
-                           WHERE sv.HoTen LIKE @Keyword
-                           ORDER BY sv.HoTen";
-            MySqlParameter[] p = {
-                new MySqlParameter("@Keyword", MySqlDbType.VarChar, 100) { Value = "%" + keyword.Trim() + "%" }
-            };
-            return MySqlHelper.ExecuteQuery(sql, CommandType.Text, p);
-        }
-
-        public DataTable FilterByKhoaAndDiem(string maKhoa, double min, double max)
-        {
-            StringBuilder sql = new StringBuilder(@"SELECT sv.MaSV, sv.HoTen, k.TenKhoa, sv.DiemTB
-                                                    FROM SinhVien sv 
-                                                    JOIN Khoa k ON sv.MaKhoa = k.MaKhoa
-                                                    WHERE sv.DiemTB BETWEEN @Min AND @Max");
-            List<MySqlParameter> pList = new List<MySqlParameter>
-            {
-                new MySqlParameter("@Min", MySqlDbType.Decimal) { Value = min },
-                new MySqlParameter("@Max", MySqlDbType.Decimal) { Value = max }
-            };
-
-            if (!string.IsNullOrEmpty(maKhoa) && maKhoa != "ALL")
-            {
-                sql.Append(" AND sv.MaKhoa = @MaKhoa");
-                pList.Add(new MySqlParameter("@MaKhoa", MySqlDbType.VarChar, 10) { Value = maKhoa });
-            }
-
-            return MySqlHelper.ExecuteQuery(sql.ToString(), CommandType.Text, pList.ToArray());
-        }
-
-        public DataTable GetStudentsPaged(int pageIndex, int pageSize, out int totalRecords)
-        {
-            string countSql = "SELECT COUNT(*) FROM SinhVien";
-            totalRecords = Convert.ToInt32(MySqlHelper.ExecuteScalar(countSql));
-
-            string sql = @"SELECT sv.MaSV, sv.HoTen, sv.NgaySinh,
-                           CASE sv.GioiTinh WHEN 1 THEN 'Nam' ELSE 'Nữ' END AS GioiTinhText,
-                           k.TenKhoa, sv.DiemTB, sv.Email
-                           FROM SinhVien sv 
-                           JOIN Khoa k ON sv.MaKhoa = k.MaKhoa
-                           ORDER BY sv.MaSV
-                           LIMIT @PageSize OFFSET @Offset";
-
-            MySqlParameter[] p = {
-                new MySqlParameter("@PageSize", MySqlDbType.Int32) { Value = pageSize },
-                new MySqlParameter("@Offset", MySqlDbType.Int32) { Value = (pageIndex - 1) * pageSize }
-            };
-
-            return MySqlHelper.ExecuteQuery(sql, CommandType.Text, p);
-        }
-
-        public DataTable SearchMultiCriteria(string maSV, string hoTen, string maKhoa, int? gioiTinh,
-                                             double? minDiem, double? maxDiem, int? minTuoi, int? maxTuoi,
-                                             string sortColumn, bool isAsc, int pageIndex, int pageSize, out int totalRecords)
-        {
-            StringBuilder sql = new StringBuilder(@"SELECT sv.MaSV, sv.HoTen, sv.NgaySinh,
-                           CASE sv.GioiTinh WHEN 1 THEN 'Nam' ELSE 'Nữ' END AS GioiTinhText,
-                           k.TenKhoa, sv.DiemTB, sv.Email, sv.MaKhoa, sv.GioiTinh,
-                           TIMESTAMPDIFF(YEAR, sv.NgaySinh, CURDATE()) AS Tuoi
-                           FROM SinhVien sv 
-                           JOIN Khoa k ON sv.MaKhoa = k.MaKhoa WHERE 1=1");
-
-            List<MySqlParameter> pList = new List<MySqlParameter>();
-
-            if (!string.IsNullOrWhiteSpace(maSV))
-            {
-                sql.Append(" AND sv.MaSV LIKE @MaSV");
-                pList.Add(new MySqlParameter("@MaSV", "%" + maSV.Trim() + "%"));
-            }
-            if (!string.IsNullOrWhiteSpace(hoTen))
-            {
-                sql.Append(" AND sv.HoTen LIKE @HoTen");
-                pList.Add(new MySqlParameter("@HoTen", "%" + hoTen.Trim() + "%"));
-            }
-            if (!string.IsNullOrWhiteSpace(maKhoa) && maKhoa != "ALL")
-            {
-                sql.Append(" AND sv.MaKhoa = @MaKhoa");
-                pList.Add(new MySqlParameter("@MaKhoa", maKhoa));
-            }
-            if (gioiTinh.HasValue)
-            {
-                sql.Append(" AND sv.GioiTinh = @GioiTinh");
-                pList.Add(new MySqlParameter("@GioiTinh", gioiTinh.Value));
-            }
-            if (minDiem.HasValue)
-            {
-                sql.Append(" AND sv.DiemTB >= @MinDiem");
-                pList.Add(new MySqlParameter("@MinDiem", minDiem.Value));
-            }
-            if (maxDiem.HasValue)
-            {
-                sql.Append(" AND sv.DiemTB <= @MaxDiem");
-                pList.Add(new MySqlParameter("@MaxDiem", maxDiem.Value));
-            }
-            if (minTuoi.HasValue)
-            {
-                sql.Append(" AND TIMESTAMPDIFF(YEAR, sv.NgaySinh, CURDATE()) >= @MinTuoi");
-                pList.Add(new MySqlParameter("@MinTuoi", minTuoi.Value));
-            }
-            if (maxTuoi.HasValue)
-            {
-                sql.Append(" AND TIMESTAMPDIFF(YEAR, sv.NgaySinh, CURDATE()) <= @MaxTuoi");
-                pList.Add(new MySqlParameter("@MaxTuoi", maxTuoi.Value));
-            }
-
-            string countSql = "SELECT COUNT(*) FROM (" + sql.ToString() + ") AS TempTable";
-            totalRecords = Convert.ToInt32(MySqlHelper.ExecuteScalar(countSql, CommandType.Text, pList.ToArray()));
-
-            string safeSort = "sv.MaSV";
-            if (sortColumn == "HoTen") safeSort = "sv.HoTen";
-            else if (sortColumn == "DiemTB") safeSort = "sv.DiemTB";
-            else if (sortColumn == "NgaySinh") safeSort = "sv.NgaySinh";
-            else if (sortColumn == "TenKhoa") safeSort = "k.TenKhoa";
-
-            sql.Append($" ORDER BY {safeSort} {(isAsc ? "ASC" : "DESC")}");
-
-            sql.Append(" LIMIT @PageSize OFFSET @Offset");
-            pList.Add(new MySqlParameter("@PageSize", pageSize));
-            pList.Add(new MySqlParameter("@Offset", (pageIndex - 1) * pageSize));
-
-            return MySqlHelper.ExecuteQuery(sql.ToString(), CommandType.Text, pList.ToArray());
-        }
-        #endregion
-
-        #region HÀM XỬ LÝ CHO LAB 10 (DISCONNECTED ADO.NET)
-        public DataTable GetStudentTableDisconnected()
-        {
-            DataTable table = new DataTable("SinhVien");
+            DataTable dt = new DataTable();
+            string sql = @"SELECT sv.MaSV, sv.HoTen, sv.NgaySinh, sv.GioiTinh, sv.MaKhoa, k.TenKhoa, sv.DiemTB, sv.Email
+                           FROM SinhVien sv
+                           LEFT JOIN Khoa k ON sv.MaKhoa = k.MaKhoa
+                           WHERE sv.MaSV LIKE @kw OR sv.HoTen LIKE @kw
+                           ORDER BY sv.MaSV";
             using (MySqlConnection conn = DbConnectionFactory.Create())
-            using (MySqlDataAdapter adapter = new MySqlDataAdapter("SELECT * FROM SinhVien ORDER BY MaSV", conn))
+            using (MySqlCommand cmd = new MySqlCommand(sql, conn))
             {
-                adapter.Fill(table);
+                cmd.Parameters.AddWithValue("@kw", "%" + keyword + "%");
+                using (MySqlDataAdapter da = new MySqlDataAdapter(cmd))
+                {
+                    da.Fill(dt);
+                }
             }
-            return table;
+            return dt;
         }
 
-        public DataSet GetQLSVDataSet()
+        public DataTable GetSinhVienByKhoa(string maKhoa)
         {
-            DataSet ds = new DataSet("QLSinhVien");
+            DataTable dt = new DataTable();
+            string sql = @"SELECT sv.MaSV, sv.HoTen, sv.NgaySinh, sv.GioiTinh, sv.MaKhoa, k.TenKhoa, sv.DiemTB, sv.Email
+                           FROM SinhVien sv
+                           LEFT JOIN Khoa k ON sv.MaKhoa = k.MaKhoa
+                           WHERE sv.MaKhoa = @MaKhoa
+                           ORDER BY sv.MaSV";
             using (MySqlConnection conn = DbConnectionFactory.Create())
+            using (MySqlCommand cmd = new MySqlCommand(sql, conn))
             {
-                MySqlDataAdapter adapterKhoa = new MySqlDataAdapter("SELECT * FROM Khoa", conn);
-                adapterKhoa.Fill(ds, "Khoa");
-
-                MySqlDataAdapter adapterSV = new MySqlDataAdapter("SELECT * FROM SinhVien", conn);
-                adapterSV.Fill(ds, "SinhVien");
+                cmd.Parameters.AddWithValue("@MaKhoa", maKhoa);
+                using (MySqlDataAdapter da = new MySqlDataAdapter(cmd))
+                {
+                    da.Fill(dt);
+                }
             }
-
-            if (ds.Tables["Khoa"].Columns.Contains("MaKhoa"))
-                ds.Tables["Khoa"].PrimaryKey = new DataColumn[] { ds.Tables["Khoa"].Columns["MaKhoa"] };
-            if (ds.Tables["SinhVien"].Columns.Contains("MaSV"))
-                ds.Tables["SinhVien"].PrimaryKey = new DataColumn[] { ds.Tables["SinhVien"].Columns["MaSV"] };
-
-            if (!ds.Relations.Contains("FK_Khoa_SinhVien"))
-            {
-                DataRelation relation = new DataRelation(
-                    "FK_Khoa_SinhVien",
-                    ds.Tables["Khoa"].Columns["MaKhoa"],
-                    ds.Tables["SinhVien"].Columns["MaKhoa"]);
-                ds.Relations.Add(relation);
-            }
-
-            return ds;
+            return dt;
         }
 
-        public MySqlDataAdapter GetStudentAdapterForUpdate(MySqlConnection conn, out MySqlCommandBuilder builder)
+        public DataTable SearchMultiCriteria(string maSV, string hoTen, string maKhoa, double? diemMin, double? diemMax)
         {
-            MySqlDataAdapter adapter = new MySqlDataAdapter("SELECT * FROM SinhVien", conn);
-            builder = new MySqlCommandBuilder(adapter);
-            return adapter;
-        }
-        #endregion
+            DataTable dt = new DataTable();
+            string sql = @"SELECT sv.MaSV, sv.HoTen, sv.NgaySinh, sv.GioiTinh, sv.MaKhoa, k.TenKhoa, sv.DiemTB, sv.Email
+                           FROM SinhVien sv
+                           LEFT JOIN Khoa k ON sv.MaKhoa = k.MaKhoa
+                           WHERE 1=1";
+            using (MySqlConnection conn = DbConnectionFactory.Create())
+            using (MySqlCommand cmd = new MySqlCommand())
+            {
+                cmd.Connection = conn;
+                if (!string.IsNullOrWhiteSpace(maSV))
+                {
+                    sql += " AND sv.MaSV LIKE @MaSV";
+                    cmd.Parameters.AddWithValue("@MaSV", "%" + maSV.Trim() + "%");
+                }
+                if (!string.IsNullOrWhiteSpace(hoTen))
+                {
+                    sql += " AND sv.HoTen LIKE @HoTen";
+                    cmd.Parameters.AddWithValue("@HoTen", "%" + hoTen.Trim() + "%");
+                }
+                if (!string.IsNullOrWhiteSpace(maKhoa))
+                {
+                    sql += " AND sv.MaKhoa = @MaKhoa";
+                    cmd.Parameters.AddWithValue("@MaKhoa", maKhoa.Trim());
+                }
+                if (diemMin.HasValue)
+                {
+                    sql += " AND sv.DiemTB >= @DiemMin";
+                    cmd.Parameters.AddWithValue("@DiemMin", diemMin.Value);
+                }
+                if (diemMax.HasValue)
+                {
+                    sql += " AND sv.DiemTB <= @DiemMax";
+                    cmd.Parameters.AddWithValue("@DiemMax", diemMax.Value);
+                }
+                sql += " ORDER BY sv.MaSV";
+                cmd.CommandText = sql;
 
-        #region HÀM XỬ LÝ CHO LAB 11 (STORED PROCEDURES CRUD)
+                using (MySqlDataAdapter da = new MySqlDataAdapter(cmd))
+                {
+                    da.Fill(dt);
+                }
+            }
+            return dt;
+        }
+
+        public bool Exists(string maSV)
+        {
+            string sql = "SELECT COUNT(*) FROM SinhVien WHERE MaSV = @MaSV";
+            using (MySqlConnection conn = DbConnectionFactory.Create())
+            using (MySqlCommand cmd = new MySqlCommand(sql, conn))
+            {
+                cmd.Parameters.AddWithValue("@MaSV", maSV);
+                conn.Open();
+                return Convert.ToInt32(cmd.ExecuteScalar()) > 0;
+            }
+        }
+
         public int Insert(SinhVienDTO dto)
         {
+            string sql = @"INSERT INTO SinhVien (MaSV, HoTen, NgaySinh, GioiTinh, MaKhoa, DiemTB, Email)
+                           VALUES (@MaSV, @HoTen, @NgaySinh, @GioiTinh, @MaKhoa, @DiemTB, @Email)";
             using (MySqlConnection conn = DbConnectionFactory.Create())
-            using (MySqlCommand cmd = new MySqlCommand("sp_SinhVien_Insert", conn))
+            using (MySqlCommand cmd = new MySqlCommand(sql, conn))
             {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("p_MaSV", dto.MaSV);
-                cmd.Parameters.AddWithValue("p_HoTen", dto.HoTen);
-                cmd.Parameters.AddWithValue("p_NgaySinh", dto.NgaySinh);
-                cmd.Parameters.AddWithValue("p_GioiTinh", dto.GioiTinh ? 1 : 0);
-                cmd.Parameters.AddWithValue("p_MaKhoa", dto.MaKhoa);
-                cmd.Parameters.AddWithValue("p_DiemTB", dto.DiemTB);
-                cmd.Parameters.AddWithValue("p_Email", string.IsNullOrWhiteSpace(dto.Email) ? (object)DBNull.Value : dto.Email);
+                string gioiTinhStr = dto.GioiTinh ? "Nam" : "Nữ";
+                cmd.Parameters.AddWithValue("@MaSV", dto.MaSV);
+                cmd.Parameters.AddWithValue("@HoTen", dto.HoTen);
+                cmd.Parameters.AddWithValue("@NgaySinh", dto.NgaySinh == DateTime.MinValue ? (object)DBNull.Value : dto.NgaySinh);
+                cmd.Parameters.AddWithValue("@GioiTinh", gioiTinhStr);
+                cmd.Parameters.AddWithValue("@MaKhoa", dto.MaKhoa);
+                cmd.Parameters.AddWithValue("@DiemTB", dto.DiemTB);
+                cmd.Parameters.AddWithValue("@Email", string.IsNullOrWhiteSpace(dto.Email) ? (object)DBNull.Value : dto.Email);
 
                 conn.Open();
                 return cmd.ExecuteNonQuery();
@@ -332,86 +196,238 @@ namespace Lab07_ADONET_Connection.DAL
 
         public int Update(SinhVienDTO dto)
         {
+            string sql = @"UPDATE SinhVien
+                           SET HoTen = @HoTen, NgaySinh = @NgaySinh, GioiTinh = @GioiTinh,
+                               MaKhoa = @MaKhoa, DiemTB = @DiemTB, Email = @Email
+                           WHERE MaSV = @MaSV";
             using (MySqlConnection conn = DbConnectionFactory.Create())
-            using (MySqlCommand cmd = new MySqlCommand("sp_SinhVien_Update", conn))
+            using (MySqlCommand cmd = new MySqlCommand(sql, conn))
             {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("p_MaSV", dto.MaSV);
-                cmd.Parameters.AddWithValue("p_HoTen", dto.HoTen);
-                cmd.Parameters.AddWithValue("p_NgaySinh", dto.NgaySinh);
-                cmd.Parameters.AddWithValue("p_GioiTinh", dto.GioiTinh ? 1 : 0);
-                cmd.Parameters.AddWithValue("p_MaKhoa", dto.MaKhoa);
-                cmd.Parameters.AddWithValue("p_DiemTB", dto.DiemTB);
-                cmd.Parameters.AddWithValue("p_Email", string.IsNullOrWhiteSpace(dto.Email) ? (object)DBNull.Value : dto.Email);
-
-                conn.Open();
-                return cmd.ExecuteNonQuery();
-            }
-        }
-
-        public int DeletePhysical(string maSV)
-        {
-            using (MySqlConnection conn = DbConnectionFactory.Create())
-            using (MySqlCommand cmd = new MySqlCommand("sp_SinhVien_Delete", conn))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("p_MaSV", maSV);
-
-                conn.Open();
-                return cmd.ExecuteNonQuery();
-            }
-        }
-
-        public int SoftDelete(string maSV)
-        {
-            using (MySqlConnection conn = DbConnectionFactory.Create())
-            using (MySqlCommand cmd = new MySqlCommand("sp_SinhVien_SoftDelete", conn))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("p_MaSV", maSV);
-
-                conn.Open();
-                return cmd.ExecuteNonQuery();
-            }
-        }
-
-        public DataTable Search(string keyword, string maKhoa)
-        {
-            MySqlParameter[] p = {
-                new MySqlParameter("p_Keyword", MySqlDbType.VarChar, 100) { Value = string.IsNullOrWhiteSpace(keyword) ? (object)DBNull.Value : keyword.Trim() },
-                new MySqlParameter("p_MaKhoa", MySqlDbType.VarChar, 10) { Value = string.IsNullOrWhiteSpace(maKhoa) ? (object)DBNull.Value : maKhoa }
-            };
-            return MySqlHelper.ExecuteQuery("sp_SinhVien_Search", CommandType.StoredProcedure, p);
-        }
-        #endregion
-
-        // Bổ sung vào SinhVienDAL.cs
-        public int Insert(SinhVienDTO dto, MySqlConnection conn, MySqlTransaction tx)
-        {
-            string sql = @"INSERT INTO SinhVien (MaSV, HoTen, NgaySinh, GioiTinh, MaKhoa, DiemTB, Email, IsActive)
-                   VALUES (@MaSV, @HoTen, @NgaySinh, @GioiTinh, @MaKhoa, @DiemTB, @Email, 1)";
-            using (MySqlCommand cmd = new MySqlCommand(sql, conn, tx))
-            {
+                string gioiTinhStr = dto.GioiTinh ? "Nam" : "Nữ";
                 cmd.Parameters.AddWithValue("@MaSV", dto.MaSV);
                 cmd.Parameters.AddWithValue("@HoTen", dto.HoTen);
-                cmd.Parameters.AddWithValue("@NgaySinh", dto.NgaySinh);
-                cmd.Parameters.AddWithValue("@GioiTinh", dto.GioiTinh ? 1 : 0);
+                cmd.Parameters.AddWithValue("@NgaySinh", dto.NgaySinh == DateTime.MinValue ? (object)DBNull.Value : dto.NgaySinh);
+                cmd.Parameters.AddWithValue("@GioiTinh", gioiTinhStr);
                 cmd.Parameters.AddWithValue("@MaKhoa", dto.MaKhoa);
                 cmd.Parameters.AddWithValue("@DiemTB", dto.DiemTB);
                 cmd.Parameters.AddWithValue("@Email", string.IsNullOrWhiteSpace(dto.Email) ? (object)DBNull.Value : dto.Email);
+
+                conn.Open();
                 return cmd.ExecuteNonQuery();
             }
         }
 
-        public int UpdateDepartment(string maSV, string maKhoaMoi, MySqlConnection conn, MySqlTransaction tx)
+        public int CapNhatDiem(string maSV, double diemMoi)
         {
-            string sql = "UPDATE SinhVien SET MaKhoa = @MaKhoaMoi WHERE MaSV = @MaSV";
-            using (MySqlCommand cmd = new MySqlCommand(sql, conn, tx))
+            string sql = "UPDATE SinhVien SET DiemTB = @DiemTB WHERE MaSV = @MaSV";
+            using (MySqlConnection conn = DbConnectionFactory.Create())
+            using (MySqlCommand cmd = new MySqlCommand(sql, conn))
             {
-                cmd.Parameters.AddWithValue("@MaKhoaMoi", maKhoaMoi);
+                cmd.Parameters.AddWithValue("@DiemTB", diemMoi);
                 cmd.Parameters.AddWithValue("@MaSV", maSV);
+                conn.Open();
                 return cmd.ExecuteNonQuery();
             }
+        }
+
+        public bool Delete(string maSV)
+        {
+            string sql = "DELETE FROM SinhVien WHERE MaSV = @MaSV";
+            using (MySqlConnection conn = DbConnectionFactory.Create())
+            using (MySqlCommand cmd = new MySqlCommand(sql, conn))
+            {
+                cmd.Parameters.AddWithValue("@MaSV", maSV);
+                conn.Open();
+                return cmd.ExecuteNonQuery() > 0;
+            }
+        }
+
+        // Lab 10: Disconnected DataSet & Adapter
+        public DataSet GetQLSVDataSet()
+        {
+            DataSet ds = new DataSet("QLSinhVien");
+            using (MySqlConnection conn = DbConnectionFactory.Create())
+            {
+                using (MySqlDataAdapter daKhoa = new MySqlDataAdapter("SELECT MaKhoa, TenKhoa FROM Khoa", conn))
+                {
+                    daKhoa.Fill(ds, "Khoa");
+                }
+                using (MySqlDataAdapter daSv = new MySqlDataAdapter("SELECT MaSV, HoTen, NgaySinh, GioiTinh, MaKhoa, DiemTB, Email FROM SinhVien", conn))
+                {
+                    daSv.Fill(ds, "SinhVien");
+                }
+            }
+            if (ds.Tables.Contains("Khoa") && ds.Tables.Contains("SinhVien") &&
+                ds.Tables["Khoa"].Columns.Contains("MaKhoa") && ds.Tables["SinhVien"].Columns.Contains("MaKhoa"))
+            {
+                ds.Relations.Add("FK_SinhVien_Khoa", ds.Tables["Khoa"].Columns["MaKhoa"], ds.Tables["SinhVien"].Columns["MaKhoa"], false);
+            }
+            return ds;
+        }
+
+        public MySqlDataAdapter GetStudentAdapterForUpdate(MySqlConnection conn = null)
+        {
+            MySqlConnection activeConn = conn ?? DbConnectionFactory.Create();
+            MySqlDataAdapter da = new MySqlDataAdapter("SELECT MaSV, HoTen, NgaySinh, GioiTinh, MaKhoa, DiemTB, Email FROM SinhVien", activeConn);
+            MySqlCommandBuilder builder = new MySqlCommandBuilder(da);
+            da.InsertCommand = builder.GetInsertCommand();
+            da.UpdateCommand = builder.GetUpdateCommand();
+            da.DeleteCommand = builder.GetDeleteCommand();
+            return da;
+        }
+
+        // Lab 11: Transactions
+        public bool AddStudentWithEnrollments(SinhVienDTO sv, List<DangKyDTO> dangKys)
+        {
+            using (MySqlConnection conn = DbConnectionFactory.Create())
+            {
+                conn.Open();
+                using (MySqlTransaction tran = conn.BeginTransaction())
+                {
+                    try
+                    {
+                        string gioiTinhStr = sv.GioiTinh ? "Nam" : "Nữ";
+                        string sqlSv = @"INSERT INTO SinhVien (MaSV, HoTen, NgaySinh, GioiTinh, MaKhoa, DiemTB, Email)
+                                         VALUES (@MaSV, @HoTen, @NgaySinh, @GioiTinh, @MaKhoa, @DiemTB, @Email)";
+                        using (MySqlCommand cmdSv = new MySqlCommand(sqlSv, conn, tran))
+                        {
+                            cmdSv.Parameters.AddWithValue("@MaSV", sv.MaSV);
+                            cmdSv.Parameters.AddWithValue("@HoTen", sv.HoTen);
+                            cmdSv.Parameters.AddWithValue("@NgaySinh", sv.NgaySinh == DateTime.MinValue ? (object)DBNull.Value : sv.NgaySinh);
+                            cmdSv.Parameters.AddWithValue("@GioiTinh", gioiTinhStr);
+                            cmdSv.Parameters.AddWithValue("@MaKhoa", sv.MaKhoa);
+                            cmdSv.Parameters.AddWithValue("@DiemTB", sv.DiemTB);
+                            cmdSv.Parameters.AddWithValue("@Email", string.IsNullOrWhiteSpace(sv.Email) ? (object)DBNull.Value : sv.Email);
+                            cmdSv.ExecuteNonQuery();
+                        }
+
+                        if (dangKys != null)
+                        {
+                            string sqlDk = "INSERT INTO DangKyHocPhan (MaSV, MaHP, HocKy) VALUES (@MaSV, @MaHP, @HocKy)";
+                            foreach (DangKyDTO dk in dangKys)
+                            {
+                                string maHp = GetPropString(dk, "MaHP", "");
+                                string hocKy = GetPropString(dk, "HocKy", "HK1-2026");
+                                if (string.IsNullOrWhiteSpace(maHp)) continue;
+
+                                using (MySqlCommand cmdDk = new MySqlCommand(sqlDk, conn, tran))
+                                {
+                                    cmdDk.Parameters.AddWithValue("@MaSV", sv.MaSV);
+                                    cmdDk.Parameters.AddWithValue("@MaHP", maHp);
+                                    cmdDk.Parameters.AddWithValue("@HocKy", hocKy);
+                                    cmdDk.ExecuteNonQuery();
+                                }
+                            }
+                        }
+
+                        tran.Commit();
+                        return true;
+                    }
+                    catch
+                    {
+                        tran.Rollback();
+                        throw;
+                    }
+                }
+            }
+        }
+
+        public bool TransferDepartment(string maSV, string maKhoaMoi)
+        {
+            using (MySqlConnection conn = DbConnectionFactory.Create())
+            {
+                conn.Open();
+                using (MySqlTransaction tran = conn.BeginTransaction())
+                {
+                    try
+                    {
+                        string sql = "UPDATE SinhVien SET MaKhoa = @MaKhoa WHERE MaSV = @MaSV";
+                        using (MySqlCommand cmd = new MySqlCommand(sql, conn, tran))
+                        {
+                            cmd.Parameters.AddWithValue("@MaKhoa", maKhoaMoi);
+                            cmd.Parameters.AddWithValue("@MaSV", maSV);
+                            int rows = cmd.ExecuteNonQuery();
+                            if (rows == 0) throw new Exception("Không tìm thấy sinh viên để chuyển khoa.");
+                        }
+                        tran.Commit();
+                        return true;
+                    }
+                    catch
+                    {
+                        tran.Rollback();
+                        throw;
+                    }
+                }
+            }
+        }
+
+        public int BulkUpdateGrades(List<DangKyDTO> danhSachDiem)
+        {
+            if (danhSachDiem == null || danhSachDiem.Count == 0) return 0;
+
+            int count = 0;
+            using (MySqlConnection conn = DbConnectionFactory.Create())
+            {
+                conn.Open();
+                using (MySqlTransaction tran = conn.BeginTransaction())
+                {
+                    try
+                    {
+                        foreach (DangKyDTO item in danhSachDiem)
+                        {
+                            string maSv = GetPropString(item, "MaSV", "");
+                            string maHp = GetPropString(item, "MaHP", "");
+                            double diem = GetPropDouble(item, new[] { "Diem", "DiemSo", "DiemTB", "DiemHP" }, 0);
+
+                            if (string.IsNullOrWhiteSpace(maSv)) continue;
+
+                            string sql = string.IsNullOrWhiteSpace(maHp)
+                                ? "UPDATE SinhVien SET DiemTB = @Diem WHERE MaSV = @MaSV"
+                                : "UPDATE DangKyHocPhan SET Diem = @Diem WHERE MaSV = @MaSV AND MaHP = @MaHP";
+
+                            using (MySqlCommand cmd = new MySqlCommand(sql, conn, tran))
+                            {
+                                cmd.Parameters.AddWithValue("@Diem", diem);
+                                cmd.Parameters.AddWithValue("@MaSV", maSv);
+                                if (!string.IsNullOrWhiteSpace(maHp))
+                                    cmd.Parameters.AddWithValue("@MaHP", maHp);
+                                count += cmd.ExecuteNonQuery();
+                            }
+                        }
+                        tran.Commit();
+                        return count;
+                    }
+                    catch
+                    {
+                        tran.Rollback();
+                        throw;
+                    }
+                }
+            }
+        }
+
+        private static string GetPropString(object obj, string propName, string defaultVal)
+        {
+            if (obj == null) return defaultVal;
+            PropertyInfo prop = obj.GetType().GetProperty(propName);
+            if (prop == null) return defaultVal;
+            object val = prop.GetValue(obj, null);
+            return val != null ? val.ToString() : defaultVal;
+        }
+
+        private static double GetPropDouble(object obj, string[] propNames, double defaultVal)
+        {
+            if (obj == null) return defaultVal;
+            foreach (string name in propNames)
+            {
+                PropertyInfo prop = obj.GetType().GetProperty(name);
+                if (prop != null)
+                {
+                    object val = prop.GetValue(obj, null);
+                    if (val != null) return Convert.ToDouble(val);
+                }
+            }
+            return defaultVal;
         }
     }
 }

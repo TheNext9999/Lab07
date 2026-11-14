@@ -1,226 +1,292 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
-using System.Text.RegularExpressions;
-using MySql.Data.MySqlClient;
+using Lab07_ADONET_Connection.Common;
 using Lab07_ADONET_Connection.DAL;
 using Lab07_ADONET_Connection.DTO;
+using MySql.Data.MySqlClient;
 
 namespace Lab07_ADONET_Connection.BUS
 {
     public class SinhVienBUS
     {
-        private SinhVienDAL dal = new SinhVienDAL();
+        private readonly SinhVienDAL _dal = new SinhVienDAL();
 
-        #region LAB 08 - PHƯƠNG THỨC MÔ HÌNH KẾT NỐI (CONNECTED)
-        public int DemSoSinhVien() => dal.DemSoSinhVien();
+        // =========================================================================
+        // 1. TRUY VẤN & THỐNG KÊ (LAB 08 - LAB 15)
+        // =========================================================================
+        public DataTable GetAllSinhVien() => _dal.GetAllSinhVien();
+        public DataTable GetAll() => _dal.GetAllSinhVien();
+        public DataTable LayDanhSachSinhVien() => _dal.GetAllSinhVien();
+        public int DemSoSinhVien() => _dal.DemSoSinhVien();
+        public double ThongKeDiemCaoNhat() => _dal.ThongKeDiemCaoNhat();
+        public double ThongKeDiemCaoNhat(string maKhoa) => _dal.ThongKeDiemCaoNhat(maKhoa);
+        public DataTable LaySinhVienTheoKhoa(string maKhoa) => GetSinhVienByKhoa(maKhoa);
+        public DataTable TimSinhVienTheoMa(string maSV) => _dal.TimSinhVienTheoMa(maSV);
 
-        public DataTable LayDanhSachSinhVien() => dal.LayDanhSachSinhVien();
+        public DataTable SearchSinhVien(string keyword)
+        {
+            if (string.IsNullOrWhiteSpace(keyword)) return GetAllSinhVien();
+            return _dal.SearchSinhVien(keyword.Trim());
+        }
+
+        public DataTable Search(string keyword) => SearchSinhVien(keyword);
+
+        public DataTable Search(object keyword, object maKhoa)
+        {
+            string kw = keyword != null ? keyword.ToString() : string.Empty;
+            string khoa = maKhoa != null ? maKhoa.ToString() : string.Empty;
+            return _dal.SearchMultiCriteria(kw, kw, khoa, null, null);
+        }
+
+        public DataTable GetSinhVienByKhoa(string maKhoa)
+        {
+            if (string.IsNullOrWhiteSpace(maKhoa)) return GetAllSinhVien();
+            return _dal.GetSinhVienByKhoa(maKhoa.Trim());
+        }
+
+        // Lab 09: Tìm kiếm đa tiêu chí (hỗ trợ bản 4 tham số, 5 tham số và 13 tham số có out)
+        public DataTable SearchMultiCriteria(string maSV, string hoTen, string maKhoa, double? diemMin, double? diemMax)
+        {
+            return _dal.SearchMultiCriteria(maSV, hoTen, maKhoa, diemMin, diemMax);
+        }
+
+        public DataTable SearchMultiCriteria(string keyword, string maKhoa, double diemMin, double diemMax)
+        {
+            return _dal.SearchMultiCriteria(keyword, keyword, maKhoa, diemMin, diemMax);
+        }
+
+        public DataTable SearchMultiCriteria(
+            object p1, object p2, object p3, object p4, object p5, object p6,
+            object p7, object p8, object p9, object p10, object p11, object p12, out int totalRecords)
+        {
+            string maSV = p1 as string;
+            string hoTen = p2 as string;
+            string maKhoa = (p4 as string) ?? (p3 as string);
+            double? diemMin = p5 is double d1 ? (double?)d1 : (p6 is double d1b ? (double?)d1b : null);
+            double? diemMax = p6 is double d2 ? (double?)d2 : (p7 is double d2b ? (double?)d2b : null);
+
+            DataTable dt = _dal.SearchMultiCriteria(maSV, hoTen, maKhoa, diemMin, diemMax);
+            totalRecords = dt.Rows.Count;
+            return dt;
+        }
+
+        public DataTable SearchMultiCriteria(
+            object p1, object p2, object p3, object p4, object p5, object p6,
+            object p7, object p8, object p9, object p10, object p11, object p12, out string debugInfo)
+        {
+            int total;
+            DataTable dt = SearchMultiCriteria(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, out total);
+            debugInfo = $"Tìm thấy {total} bản ghi.";
+            return dt;
+        }
+
+        // =========================================================================
+        // 2. THÊM / SỬA / XÓA & KIỂM TRA NGHIỆP VỤ (LAB 08 & LAB 15)
+        // =========================================================================
+        public bool Add(SinhVienDTO dto)
+        {
+            ValidationResult validation = SinhVienValidator.Validate(dto);
+            if (!validation.IsValid)
+            {
+                throw new BusinessException("Dữ liệu thêm mới không hợp lệ:\n- " + validation.GetSummaryMessage());
+            }
+
+            dto.MaSV = dto.MaSV.Trim().ToUpper();
+            dto.HoTen = dto.HoTen.Trim();
+            dto.MaKhoa = dto.MaKhoa.Trim();
+            if (!string.IsNullOrWhiteSpace(dto.Email))
+                dto.Email = dto.Email.Trim();
+
+            if (_dal.Exists(dto.MaSV))
+            {
+                throw new BusinessException($"Mã sinh viên '{dto.MaSV}' đã tồn tại trong hệ thống.");
+            }
+
+            bool result = _dal.Insert(dto) > 0;
+            if (result)
+            {
+                Logger.Info($"Thêm mới sinh viên thành công: {dto.MaSV} - {dto.HoTen}.");
+            }
+            return result;
+        }
+
+        public bool Insert(SinhVienDTO dto) => Add(dto);
+
+        public int ThemSinhVien(SinhVienDTO dto)
+        {
+            return Add(dto) ? 1 : 0;
+        }
 
         public int ThemSinhVien(string maSV, string hoTen, DateTime ngaySinh, bool gioiTinh, string maKhoa, double diemTB, string email)
-            => dal.ThemSinhVien(maSV, hoTen, ngaySinh, gioiTinh, maKhoa, diemTB, email);
-
-        public int CapNhatDiem(string maSV, double diemTB) => dal.CapNhatDiem(maSV, diemTB);
-
-        public DataTable LaySinhVienTheoKhoa(string maKhoa) => dal.LaySinhVienTheoKhoa(maKhoa);
-
-        public DataTable TimSinhVienTheoMa(string maSV) => dal.TimSinhVienTheoMa(maSV);
-
-        public double ThongKeDiemCaoNhat(string maKhoa) => dal.ThongKeDiemCaoNhat(maKhoa);
-
-        public int XoaSinhVien(string maSV) => dal.XoaSinhVien(maSV);
-
-        public int ThemSinhVienCoOutput(string maSV, string hoTen, DateTime ngaySinh, bool gioiTinh, string maKhoa, double diemTB, string email, out int tongSoSV)
-            => dal.ThemSinhVienCoOutput(maSV, hoTen, ngaySinh, gioiTinh, maKhoa, diemTB, email, out tongSoSV);
-        #endregion
-
-        #region LAB 09 - TÌM KIẾM DATAREADER, LỌC & PHÂN TRANG
-        public DataTable LoadStudents() => dal.LoadStudents();
-
-        public DataTable SearchByName(string keyword) => dal.SearchByName(keyword);
-
-        public DataTable FilterByKhoaAndDiem(string maKhoa, double min, double max) => dal.FilterByKhoaAndDiem(maKhoa, min, max);
-
-        public DataTable GetStudentsPaged(int pageIndex, int pageSize, out int totalRecords)
-            => dal.GetStudentsPaged(pageIndex, pageSize, out totalRecords);
-
-        public DataTable SearchMultiCriteria(string maSV, string hoTen, string maKhoa, int? gioiTinh,
-                                             double? minDiem, double? maxDiem, int? minTuoi, int? maxTuoi,
-                                             string sortColumn, bool isAsc, int pageIndex, int pageSize, out int totalRecords)
         {
-            return dal.SearchMultiCriteria(maSV, hoTen, maKhoa, gioiTinh, minDiem, maxDiem, minTuoi, maxTuoi, sortColumn, isAsc, pageIndex, pageSize, out totalRecords);
-        }
-        #endregion
-
-        #region LAB 10 - MÔ HÌNH NGẮT KẾT NỐI (DISCONNECTED)
-        public DataTable GetStudentTableDisconnected() => dal.GetStudentTableDisconnected();
-
-        public DataSet GetQLSVDataSet() => dal.GetQLSVDataSet();
-
-        public MySqlDataAdapter GetStudentAdapterForUpdate(MySqlConnection conn, out MySqlCommandBuilder builder)
-            => dal.GetStudentAdapterForUpdate(conn, out builder);
-        #endregion
-
-        #region LAB 11 - KIẾN TRÚC 3 LỚP STORED PROCEDURE & KIỂM TRA NGHIỆP VỤ
-        public void Add(SinhVienDTO dto)
-        {
-            Validate(dto);
-            dal.Insert(dto);
+            SinhVienDTO dto = new SinhVienDTO
+            {
+                MaSV = maSV,
+                HoTen = hoTen,
+                NgaySinh = ngaySinh,
+                GioiTinh = gioiTinh,
+                MaKhoa = maKhoa,
+                DiemTB = diemTB,
+                Email = email
+            };
+            return Add(dto) ? 1 : 0;
         }
 
-        public void Update(SinhVienDTO dto)
+        public int ThemSinhVien(string maSV, string hoTen, DateTime ngaySinh, string gioiTinh, string maKhoa, double diemTB, string email)
         {
-            Validate(dto);
-            dal.Update(dto);
+            bool gt = !string.IsNullOrWhiteSpace(gioiTinh) &&
+                      (gioiTinh.Trim().Equals("Nam", StringComparison.OrdinalIgnoreCase) ||
+                       gioiTinh.Trim() == "1" ||
+                       gioiTinh.Trim().Equals("true", StringComparison.OrdinalIgnoreCase));
+            return ThemSinhVien(maSV, hoTen, ngaySinh, gt, maKhoa, diemTB, email);
         }
 
-        public void Delete(string maSV, bool isSoftDelete = true)
+        public int ThemSinhVienCoOutput(SinhVienDTO dto, out int tongSinhVien)
+        {
+            int rows = ThemSinhVien(dto);
+            tongSinhVien = DemSoSinhVien();
+            return rows;
+        }
+
+        public int ThemSinhVienCoOutput(string maSV, string hoTen, DateTime ngaySinh, bool gioiTinh, string maKhoa, double diemTB, string email, out int tongSinhVien)
+        {
+            int rows = ThemSinhVien(maSV, hoTen, ngaySinh, gioiTinh, maKhoa, diemTB, email);
+            tongSinhVien = DemSoSinhVien();
+            return rows;
+        }
+
+        public int ThemSinhVienCoOutput(string maSV, string hoTen, DateTime ngaySinh, string gioiTinh, string maKhoa, double diemTB, string email, out int tongSinhVien)
+        {
+            int rows = ThemSinhVien(maSV, hoTen, ngaySinh, gioiTinh, maKhoa, diemTB, email);
+            tongSinhVien = DemSoSinhVien();
+            return rows;
+        }
+
+        public bool Update(SinhVienDTO dto)
+        {
+            ValidationResult validation = SinhVienValidator.Validate(dto);
+            if (!validation.IsValid)
+            {
+                throw new BusinessException("Dữ liệu cập nhật không hợp lệ:\n- " + validation.GetSummaryMessage());
+            }
+
+            dto.MaSV = dto.MaSV.Trim().ToUpper();
+            dto.HoTen = dto.HoTen.Trim();
+            dto.MaKhoa = dto.MaKhoa.Trim();
+            if (!string.IsNullOrWhiteSpace(dto.Email))
+                dto.Email = dto.Email.Trim();
+
+            if (!_dal.Exists(dto.MaSV))
+            {
+                throw new BusinessException($"Không tìm thấy sinh viên có mã '{dto.MaSV}' để cập nhật.");
+            }
+
+            bool result = _dal.Update(dto) > 0;
+            if (result)
+            {
+                Logger.Info($"Cập nhật sinh viên: {dto.MaSV} - {dto.HoTen} (Điểm TB: {dto.DiemTB:0.00}).");
+            }
+            return result;
+        }
+
+        public int CapNhatDiem(string maSV, double diemMoi)
         {
             if (string.IsNullOrWhiteSpace(maSV))
-                throw new ArgumentException("Mã sinh viên không được để rỗng.");
+                throw new BusinessException("Thiếu mã sinh viên cần cập nhật điểm.");
+            if (diemMoi < 0 || diemMoi > 10)
+                throw new BusinessException("Điểm trung bình phải thuộc khoảng [0, 10].");
 
-            if (isSoftDelete)
-                dal.SoftDelete(maSV);
-            else
-                dal.DeletePhysical(maSV);
+            int rows = _dal.CapNhatDiem(maSV.Trim().ToUpper(), diemMoi);
+            if (rows > 0)
+            {
+                Logger.Info($"Cập nhật điểm SV {maSV}: {diemMoi:0.00}");
+            }
+            return rows;
         }
 
-        public DataTable Search(string keyword, string maKhoa)
+        public bool Delete(string maSV)
         {
-            return dal.Search(keyword, maKhoa);
+            if (string.IsNullOrWhiteSpace(maSV))
+                throw new BusinessException("Vui lòng chọn hoặc nhập mã sinh viên cần xóa.");
+
+            string cleanMaSV = maSV.Trim().ToUpper();
+            if (!_dal.Exists(cleanMaSV))
+                throw new BusinessException($"Sinh viên có mã '{cleanMaSV}' không tồn tại.");
+
+            bool result = _dal.Delete(cleanMaSV);
+            if (result)
+            {
+                Logger.Info($"Đã xóa sinh viên: {cleanMaSV}");
+            }
+            return result;
         }
 
-        private void Validate(SinhVienDTO dto)
+        public bool Delete(string maSV, object rowVersion)
         {
-            if (dto == null)
-                throw new ArgumentNullException(nameof(dto), "Dữ liệu sinh viên không hợp lệ.");
-
-            if (string.IsNullOrWhiteSpace(dto.MaSV))
-                throw new ArgumentException("Mã sinh viên không được để rỗng.");
-
-            if (string.IsNullOrWhiteSpace(dto.HoTen))
-                throw new ArgumentException("Họ tên sinh viên không được để rỗng.");
-
-            if (dto.NgaySinh > DateTime.Today.AddYears(-15))
-                throw new ArgumentException("Tuổi sinh viên chưa đủ 15 tuổi.");
-
-            if (dto.DiemTB < 0 || dto.DiemTB > 10)
-                throw new ArgumentException("Điểm trung bình phải nằm trong khoảng [0.0, 10.0].");
-
-            if (!string.IsNullOrWhiteSpace(dto.Email))
-            {
-                string emailPattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
-                if (!Regex.IsMatch(dto.Email, emailPattern))
-                    throw new ArgumentException("Định dạng email không hợp lệ.");
-            }
-        }
-        #endregion
-        // Bổ sung các phương thức Transaction vào SinhVienBUS.cs
-        private DangKyDAL dangKyDal = new DangKyDAL();
-
-        // Bài 3 & 4: Transaction Thêm SinhVien & Đăng ký ban đầu (Kiểm chứng Rollback)
-        public bool AddStudentWithEnrollments(SinhVienDTO svDto, System.Collections.Generic.List<DangKyDTO> dsDangKy)
-        {
-            Validate(svDto); // Kiểm tra nghiệp vụ trước khi mở kết nối CSDL
-
-            using (MySqlConnection conn = DbConnectionFactory.Create())
-            {
-                conn.Open();
-                using (MySqlTransaction tx = conn.BeginTransaction())
-                {
-                    try
-                    {
-                        // Bước 1: Thêm sinh viên
-                        dal.Insert(svDto, conn, tx);
-
-                        // Bước 2: Thêm danh sách môn đăng ký
-                        foreach (var dk in dsDangKy)
-                        {
-                            dangKyDal.Insert(dk, conn, tx);
-                        }
-
-                        tx.Commit(); // Hoàn tất giao dịch thành công
-                        return true;
-                    }
-                    catch (Exception ex)
-                    {
-                        tx.Rollback(); // Hoàn tác 100% dữ liệu nếu gặp bất kỳ lỗi nào
-                        throw new Exception("Giao dịch THẤT BẠI và đã ROLLBACK toàn bộ: " + ex.Message);
-                    }
-                }
-            }
+            return Delete(maSV);
         }
 
-        // Bài 6: Chuyển Khoa & Ghi nhật ký vào LichSuChuyenKhoa
-        public bool TransferDepartment(string maSV, string maKhoaCu, string maKhoaMoi, string lyDo)
+        public int XoaSinhVien(string maSV)
         {
-            if (string.IsNullOrEmpty(maSV) || string.IsNullOrEmpty(maKhoaMoi))
-                throw new ArgumentException("Thông tin chuyển khoa không hợp lệ.");
-
-            using (MySqlConnection conn = DbConnectionFactory.Create())
-            {
-                conn.Open();
-                using (MySqlTransaction tx = conn.BeginTransaction())
-                {
-                    try
-                    {
-                        // 1. Cập nhật mã khoa mới cho SinhVien
-                        dal.UpdateDepartment(maSV, maKhoaMoi, conn, tx);
-
-                        // 2. Thêm lịch sử chuyển khoa
-                        string sqlLog = @"INSERT INTO LichSuChuyenKhoa (MaSV, MaKhoaCu, MaKhoaMoi, LyDo) VALUES (@MaSV, @MaKhoaCu, @MaKhoaMoi, @LyDo)";
-                        using (MySqlCommand cmd = new MySqlCommand(sqlLog, conn, tx))
-                        {
-                            cmd.Parameters.AddWithValue("@MaSV", maSV);
-                            cmd.Parameters.AddWithValue("@MaKhoaCu", maKhoaCu);
-                            cmd.Parameters.AddWithValue("@MaKhoaMoi", maKhoaMoi);
-                            cmd.Parameters.AddWithValue("@LyDo", lyDo);
-                            cmd.ExecuteNonQuery();
-                        }
-
-                        tx.Commit();
-                        return true;
-                    }
-                    catch
-                    {
-                        tx.Rollback();
-                        throw;
-                    }
-                }
-            }
+            return Delete(maSV) ? 1 : 0;
         }
 
-        // Bài 8: Cập nhật điểm hàng loạt trong Transaction (Rollback nếu điểm không hợp lệ)
-        public bool BulkUpdateGrades(System.Collections.Generic.List<DangKyDTO> dsCapNhat)
+        // =========================================================================
+        // 3. DISCONNECTED DATASET & ADAPTER (LAB 10)
+        // =========================================================================
+        public DataTable GetStudentTableDisconnected() => _dal.GetAllSinhVien();
+        public DataSet GetQLSVDataSet() => _dal.GetQLSVDataSet();
+        public MySqlDataAdapter GetStudentAdapterForUpdate() => _dal.GetStudentAdapterForUpdate();
+
+        public MySqlDataAdapter GetStudentAdapterForUpdate(MySqlConnection conn, out MySqlCommandBuilder builder)
         {
-            // Kiểm tra validate trước
-            foreach (var dk in dsCapNhat)
-            {
-                if (dk.Diem < 0 || dk.Diem > 10)
-                    throw new ArgumentException($"Điểm [{dk.Diem}] của sinh viên [{dk.MaSV}] môn [{dk.MaHP}] không hợp lệ (Phải thuộc [0, 10]).");
-            }
+            MySqlDataAdapter da = _dal.GetStudentAdapterForUpdate(conn);
+            builder = new MySqlCommandBuilder(da);
+            return da;
+        }
 
-            using (MySqlConnection conn = DbConnectionFactory.Create())
-            {
-                conn.Open();
-                using (MySqlTransaction tx = conn.BeginTransaction())
-                {
-                    try
-                    {
-                        foreach (var dk in dsCapNhat)
-                        {
-                            dangKyDal.UpdateGrade(dk.MaSV, dk.MaHP, dk.HocKy, dk.Diem.Value, conn, tx);
-                        }
+        public MySqlDataAdapter GetStudentAdapterForUpdate(object arg1, object arg2)
+        {
+            return _dal.GetStudentAdapterForUpdate(arg1 as MySqlConnection);
+        }
 
-                        tx.Commit();
-                        return true;
-                    }
-                    catch
-                    {
-                        tx.Rollback();
-                        throw;
-                    }
-                }
-            }
+        // =========================================================================
+        // 4. GIAO DỊCH TRANSACTIONS (LAB 11)
+        // =========================================================================
+        public bool AddStudentWithEnrollments(SinhVienDTO sv, List<DangKyDTO> dangKys)
+        {
+            ValidationResult validation = SinhVienValidator.Validate(sv);
+            if (!validation.IsValid)
+                throw new BusinessException("Dữ liệu sinh viên không hợp lệ:\n- " + validation.GetSummaryMessage());
+
+            bool ok = _dal.AddStudentWithEnrollments(sv, dangKys);
+            if (ok) Logger.Info($"Thêm SV kèm đăng ký học phần (Transaction): {sv.MaSV}");
+            return ok;
+        }
+
+        public bool TransferDepartment(string maSV, string maKhoaMoi)
+        {
+            if (string.IsNullOrWhiteSpace(maSV) || string.IsNullOrWhiteSpace(maKhoaMoi))
+                throw new BusinessException("Thiếu mã sinh viên hoặc mã khoa mới.");
+
+            bool ok = _dal.TransferDepartment(maSV.Trim().ToUpper(), maKhoaMoi.Trim());
+            if (ok) Logger.Info($"Chuyển khoa SV {maSV} sang {maKhoaMoi}");
+            return ok;
+        }
+
+        public bool TransferDepartment(object maSV, object maKhoaCu, object maKhoaMoi, object lyDo)
+        {
+            string sv = maSV != null ? maSV.ToString() : string.Empty;
+            string targetKhoa = maKhoaMoi != null ? maKhoaMoi.ToString() : string.Empty;
+            return TransferDepartment(sv, targetKhoa);
+        }
+
+        public int BulkUpdateGrades(List<DangKyDTO> danhSachDiem)
+        {
+            int count = _dal.BulkUpdateGrades(danhSachDiem);
+            Logger.Info($"Cập nhật điểm hàng loạt: {count} bản ghi.");
+            return count;
         }
     }
 }

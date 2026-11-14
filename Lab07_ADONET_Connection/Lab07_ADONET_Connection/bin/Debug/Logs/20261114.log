@@ -1,0 +1,134 @@
+﻿2026-11-14 16:43:18.538 | INFO  | Ứng dụng Quản lý Sinh viên khởi động.
+2026-11-14 16:43:20.610 | ERROR | Pre-flight check thất bại ở bước kiểm tra Crystal Reports
+System.TypeInitializationException: The type initializer for 'CrystalDecisions.CrystalReports.Engine.ReportDocument' threw an exception. ---> System.IO.FileNotFoundException: Retrieving the COM class factory for component with CLSID {4DB2E2BB-78E6-4AEA-BEFB-FDAAB610FD1B} failed due to the following error: 8007007e The specified module could not be found. (Exception from HRESULT: 0x8007007E).
+   at CrystalDecisions.CrystalReports.Engine.ReportDocument..cctor()
+   --- End of inner exception stack trace ---
+   at CrystalDecisions.CrystalReports.Engine.ReportDocument..ctor()
+   at Lab07_ADONET_Connection.GUI.frmLab15_HeThongVaCauHinh.RunPreFlightChecks() in D:\BT Classroom Lab\Lab07\Lab07_ADONET_Connection\Lab07_ADONET_Connection\GUI\frmLab15_HeThongVaCauHinh.cs:line 83
+2026-11-14 16:43:49.253 | ERROR | Pre-flight check thất bại ở bước kiểm tra Crystal Reports
+System.TypeInitializationException: The type initializer for 'CrystalDecisions.CrystalReports.Engine.ReportDocument' threw an exception. ---> System.IO.FileNotFoundException: Retrieving the COM class factory for component with CLSID {4DB2E2BB-78E6-4AEA-BEFB-FDAAB610FD1B} failed due to the following error: 8007007e The specified module could not be found. (Exception from HRESULT: 0x8007007E).
+   at CrystalDecisions.CrystalReports.Engine.ReportDocument..cctor()
+   --- End of inner exception stack trace ---
+   at CrystalDecisions.CrystalReports.Engine.ReportDocument..ctor()
+   at Lab07_ADONET_Connection.GUI.frmLab15_HeThongVaCauHinh.RunPreFlightChecks() in D:\BT Classroom Lab\Lab07\Lab07_ADONET_Connection\Lab07_ADONET_Connection\GUI\frmLab15_HeThongVaCauHinh.cs:line 83
+2026-11-14 16:44:49.381 | INFO  | Đã mã hóa mục connectionStrings trong App.config bằng DPAPI.
+2026-11-14 16:44:49.396 | ERROR | Lỗi không xác định khi mã hóa cấu hình App.config
+System.Configuration.ConfigurationErrorsException: Unrecognized attribute 'configProtectionProvider'. Note that attribute names are case-sensitive. (D:\BT Classroom Lab\Lab07\Lab07_ADONET_Connection\Lab07_ADONET_Connection\bin\Debug\Lab07_ADONET_Connection.exe.Config line 3)
+   at System.Configuration.BaseConfigurationRecord.EvaluateOne(String[] keys, SectionInput input, Boolean isTrusted, FactoryRecord factoryRecord, SectionRecord sectionRecord, Object parentResult)
+   at System.Configuration.BaseConfigurationRecord.Evaluate(FactoryRecord factoryRecord, SectionRecord sectionRecord, Object parentResult, Boolean getLkg, Boolean getRuntimeObject, Object& result, Object& resultRuntimeObject)
+   at System.Configuration.BaseConfigurationRecord.GetSectionRecursive(String configKey, Boolean getLkg, Boolean checkPermission, Boolean getRuntimeObject, Boolean requestIsHere, Object& result, Object& resultRuntimeObject)
+   at System.Configuration.BaseConfigurationRecord.GetSectionRecursive(String configKey, Boolean getLkg, Boolean checkPermission, Boolean getRuntimeObject, Boolean requestIsHere, Object& result, Object& resultRuntimeObject)
+   at System.Configuration.BaseConfigurationRecord.GetSectionRecursive(String configKey, Boolean getLkg, Boolean checkPermission, Boolean getRuntimeObject, Boolean requestIsHere, Object& result, Object& resultRuntimeObject)
+   at System.Configuration.BaseConfigurationRecord.GetSection(String configKey)
+   at System.Configuration.ClientConfigurationSystem.System.Configuration.Internal.IInternalConfigSystem.GetSection(String sectionName)
+   at System.Configuration.ConfigurationManager.get_ConnectionStrings()
+   at Lab07_ADONET_Connection.DAL.DbConnectionFactory.GetConnectionString(String connectionName) in D:\BT Classroom Lab\Lab07\Lab07_ADONET_Connection\Lab07_ADONET_Connection\DAL\DbConnectionFactory.cs:line 18
+   at Lab07_ADONET_Connection.DAL.DbConnectionFactory.GetConnectionString() in D:\BT Classroom Lab\Lab07\Lab07_ADONET_Connection\Lab07_ADONET_Connection\DAL\DbConnectionFactory.cs:line 10
+   at Lab07_ADONET_Connection.GUI.frmLab15_HeThongVaCauHinh.RefreshConfigStatus() in D:\BT Classroom Lab\Lab07\Lab07_ADONET_Connection\Lab07_ADONET_Connection\GUI\frmLab15_HeThongVaCauHinh.cs:line 121
+   at Lab07_ADONET_Connection.GUI.frmLab15_HeThongVaCauHinh.btnMaHoaConfig_Click(Object sender, EventArgs e) in D:\BT Classroom Lab\Lab07\Lab07_ADONET_Connection\Lab07_ADONET_Connection\GUI\frmLab15_HeThongVaCauHinh.cs:line 142
+2026-11-14 16:44:55.759 | INFO  | Đã giải mã mục connectionStrings trong App.config.
+2026-11-14 16:44:55.807 | ERROR | Pre-flight check thất bại ở bước kiểm tra Crystal Reports
+System.TypeInitializationException: The type initializer for 'CrystalDecisions.CrystalReports.Engine.ReportDocument' threw an exception. ---> System.IO.FileNotFoundException: Retrieving the COM class factory for component with CLSID {4DB2E2BB-78E6-4AEA-BEFB-FDAAB610FD1B} failed due to the following error: 8007007e The specified module could not be found. (Exception from HRESULT: 0x8007007E).
+   at CrystalDecisions.CrystalReports.Engine.ReportDocument..cctor()
+   --- End of inner exception stack trace ---
+   at CrystalDecisions.CrystalReports.Engine.ReportDocument..ctor()
+   at Lab07_ADONET_Connection.GUI.frmLab15_HeThongVaCauHinh.RunPreFlightChecks() in D:\BT Classroom Lab\Lab07\Lab07_ADONET_Connection\Lab07_ADONET_Connection\GUI\frmLab15_HeThongVaCauHinh.cs:line 83
+2026-11-14 16:45:14.525 | WARN  | Vi phạm nghiệp vụ [kiểm tra dữ liệu SinhVienDTO]: Phát hiện nhiều lỗi nhập liệu cùng lúc:
+- Thiếu mã sinh viên.
+- Thiếu họ tên sinh viên.
+- Chưa chọn khoa trực thuộc.
+- Điểm trung bình phải thuộc khoảng [0, 10].
+- Địa chỉ Email không đúng định dạng.
+2026-11-14 16:46:11.489 | INFO  | Ứng dụng Quản lý Sinh viên khởi động.
+2026-11-14 16:46:11.756 | ERROR | Pre-flight check thất bại ở bước kiểm tra Crystal Reports
+System.TypeInitializationException: The type initializer for 'CrystalDecisions.CrystalReports.Engine.ReportDocument' threw an exception. ---> System.IO.FileNotFoundException: Retrieving the COM class factory for component with CLSID {4DB2E2BB-78E6-4AEA-BEFB-FDAAB610FD1B} failed due to the following error: 8007007e The specified module could not be found. (Exception from HRESULT: 0x8007007E).
+   at CrystalDecisions.CrystalReports.Engine.ReportDocument..cctor()
+   --- End of inner exception stack trace ---
+   at CrystalDecisions.CrystalReports.Engine.ReportDocument..ctor()
+   at Lab07_ADONET_Connection.GUI.frmLab15_HeThongVaCauHinh.RunPreFlightChecks() in D:\BT Classroom Lab\Lab07\Lab07_ADONET_Connection\Lab07_ADONET_Connection\GUI\frmLab15_HeThongVaCauHinh.cs:line 83
+2026-11-14 16:46:37.749 | INFO  | Đã mã hóa mục connectionStrings trong App.config bằng DPAPI.
+2026-11-14 16:46:37.763 | ERROR | Lỗi không xác định khi mã hóa cấu hình App.config
+System.Configuration.ConfigurationErrorsException: Unrecognized attribute 'configProtectionProvider'. Note that attribute names are case-sensitive. (D:\BT Classroom Lab\Lab07\Lab07_ADONET_Connection\Lab07_ADONET_Connection\bin\Debug\Lab07_ADONET_Connection.exe.Config line 3)
+   at System.Configuration.BaseConfigurationRecord.EvaluateOne(String[] keys, SectionInput input, Boolean isTrusted, FactoryRecord factoryRecord, SectionRecord sectionRecord, Object parentResult)
+   at System.Configuration.BaseConfigurationRecord.Evaluate(FactoryRecord factoryRecord, SectionRecord sectionRecord, Object parentResult, Boolean getLkg, Boolean getRuntimeObject, Object& result, Object& resultRuntimeObject)
+   at System.Configuration.BaseConfigurationRecord.GetSectionRecursive(String configKey, Boolean getLkg, Boolean checkPermission, Boolean getRuntimeObject, Boolean requestIsHere, Object& result, Object& resultRuntimeObject)
+   at System.Configuration.BaseConfigurationRecord.GetSectionRecursive(String configKey, Boolean getLkg, Boolean checkPermission, Boolean getRuntimeObject, Boolean requestIsHere, Object& result, Object& resultRuntimeObject)
+   at System.Configuration.BaseConfigurationRecord.GetSectionRecursive(String configKey, Boolean getLkg, Boolean checkPermission, Boolean getRuntimeObject, Boolean requestIsHere, Object& result, Object& resultRuntimeObject)
+   at System.Configuration.BaseConfigurationRecord.GetSection(String configKey)
+   at System.Configuration.ClientConfigurationSystem.System.Configuration.Internal.IInternalConfigSystem.GetSection(String sectionName)
+   at System.Configuration.ConfigurationManager.get_ConnectionStrings()
+   at Lab07_ADONET_Connection.DAL.DbConnectionFactory.GetConnectionString(String connectionName) in D:\BT Classroom Lab\Lab07\Lab07_ADONET_Connection\Lab07_ADONET_Connection\DAL\DbConnectionFactory.cs:line 18
+   at Lab07_ADONET_Connection.DAL.DbConnectionFactory.GetConnectionString() in D:\BT Classroom Lab\Lab07\Lab07_ADONET_Connection\Lab07_ADONET_Connection\DAL\DbConnectionFactory.cs:line 10
+   at Lab07_ADONET_Connection.GUI.frmLab15_HeThongVaCauHinh.RefreshConfigStatus() in D:\BT Classroom Lab\Lab07\Lab07_ADONET_Connection\Lab07_ADONET_Connection\GUI\frmLab15_HeThongVaCauHinh.cs:line 121
+   at Lab07_ADONET_Connection.GUI.frmLab15_HeThongVaCauHinh.btnMaHoaConfig_Click(Object sender, EventArgs e) in D:\BT Classroom Lab\Lab07\Lab07_ADONET_Connection\Lab07_ADONET_Connection\GUI\frmLab15_HeThongVaCauHinh.cs:line 142
+2026-11-14 16:46:52.778 | INFO  | Đã giải mã mục connectionStrings trong App.config.
+2026-11-14 16:46:52.787 | ERROR | Pre-flight check thất bại ở bước kiểm tra Crystal Reports
+System.TypeInitializationException: The type initializer for 'CrystalDecisions.CrystalReports.Engine.ReportDocument' threw an exception. ---> System.IO.FileNotFoundException: Retrieving the COM class factory for component with CLSID {4DB2E2BB-78E6-4AEA-BEFB-FDAAB610FD1B} failed due to the following error: 8007007e The specified module could not be found. (Exception from HRESULT: 0x8007007E).
+   at CrystalDecisions.CrystalReports.Engine.ReportDocument..cctor()
+   --- End of inner exception stack trace ---
+   at CrystalDecisions.CrystalReports.Engine.ReportDocument..ctor()
+   at Lab07_ADONET_Connection.GUI.frmLab15_HeThongVaCauHinh.RunPreFlightChecks() in D:\BT Classroom Lab\Lab07\Lab07_ADONET_Connection\Lab07_ADONET_Connection\GUI\frmLab15_HeThongVaCauHinh.cs:line 83
+2026-11-14 16:46:58.614 | ERROR | Pre-flight check thất bại ở bước kiểm tra Crystal Reports
+System.TypeInitializationException: The type initializer for 'CrystalDecisions.CrystalReports.Engine.ReportDocument' threw an exception. ---> System.IO.FileNotFoundException: Retrieving the COM class factory for component with CLSID {4DB2E2BB-78E6-4AEA-BEFB-FDAAB610FD1B} failed due to the following error: 8007007e The specified module could not be found. (Exception from HRESULT: 0x8007007E).
+   at CrystalDecisions.CrystalReports.Engine.ReportDocument..cctor()
+   --- End of inner exception stack trace ---
+   at CrystalDecisions.CrystalReports.Engine.ReportDocument..ctor()
+   at Lab07_ADONET_Connection.GUI.frmLab15_HeThongVaCauHinh.RunPreFlightChecks() in D:\BT Classroom Lab\Lab07\Lab07_ADONET_Connection\Lab07_ADONET_Connection\GUI\frmLab15_HeThongVaCauHinh.cs:line 83
+2026-11-14 16:47:12.274 | ERROR | Pre-flight check thất bại ở bước kiểm tra Crystal Reports
+System.TypeInitializationException: The type initializer for 'CrystalDecisions.CrystalReports.Engine.ReportDocument' threw an exception. ---> System.IO.FileNotFoundException: Retrieving the COM class factory for component with CLSID {4DB2E2BB-78E6-4AEA-BEFB-FDAAB610FD1B} failed due to the following error: 8007007e The specified module could not be found. (Exception from HRESULT: 0x8007007E).
+   at CrystalDecisions.CrystalReports.Engine.ReportDocument..cctor()
+   --- End of inner exception stack trace ---
+   at CrystalDecisions.CrystalReports.Engine.ReportDocument..ctor()
+   at Lab07_ADONET_Connection.GUI.frmLab15_HeThongVaCauHinh.RunPreFlightChecks() in D:\BT Classroom Lab\Lab07\Lab07_ADONET_Connection\Lab07_ADONET_Connection\GUI\frmLab15_HeThongVaCauHinh.cs:line 83
+2026-11-14 16:47:15.753 | WARN  | Vi phạm nghiệp vụ [kiểm tra dữ liệu SinhVienDTO]: Phát hiện nhiều lỗi nhập liệu cùng lúc:
+- Thiếu mã sinh viên.
+- Thiếu họ tên sinh viên.
+- Chưa chọn khoa trực thuộc.
+- Điểm trung bình phải thuộc khoảng [0, 10].
+- Địa chỉ Email không đúng định dạng.
+2026-11-14 16:47:24.574 | ERROR | Lỗi CSDL MySQL (1146) khi truy vấn kiểm thử lỗi CSDL
+MySql.Data.MySqlClient.MySqlException (0x80004005): Table 'qlsinhvien.bangkhongtontai_testlog' doesn't exist
+   at MySql.Data.MySqlClient.MySqlStream.CheckForServerError()
+   at MySql.Data.MySqlClient.NativeDriver.GetResult(Int32 affectedRow, Int64 insertedId)
+   at MySql.Data.MySqlClient.Driver.GetResult(Int32 statementId, Int32 affectedRows, Int64 insertedId)
+   at MySql.Data.MySqlClient.Driver.NextResult(Int32 statementId, Boolean force)
+   at MySql.Data.MySqlClient.MySqlDataReader.NextResult(CancellationToken cancellationToken)
+   at MySql.Data.MySqlClient.MySqlCommand.ExecuteReader(CommandBehavior behavior, CancellationToken cancellationToken)
+   at MySql.Data.MySqlClient.MySqlCommand.ExecuteNonQuery(CancellationToken cancellationToken)
+   at MySql.Data.MySqlClient.MySqlCommand.ExecuteNonQuery()
+   at Lab07_ADONET_Connection.GUI.frmLab15_HeThongVaCauHinh.btnTestDbError_Click(Object sender, EventArgs e) in D:\BT Classroom Lab\Lab07\Lab07_ADONET_Connection\Lab07_ADONET_Connection\GUI\frmLab15_HeThongVaCauHinh.cs:line 203
+2026-11-14 16:49:05.509 | INFO  | Đã mã hóa mục connectionStrings trong App.config bằng DPAPI.
+2026-11-14 16:49:05.515 | ERROR | Lỗi không xác định khi mã hóa cấu hình App.config
+System.Configuration.ConfigurationErrorsException: Unrecognized attribute 'configProtectionProvider'. Note that attribute names are case-sensitive. (D:\BT Classroom Lab\Lab07\Lab07_ADONET_Connection\Lab07_ADONET_Connection\bin\Debug\Lab07_ADONET_Connection.exe.Config line 3)
+   at System.Configuration.BaseConfigurationRecord.EvaluateOne(String[] keys, SectionInput input, Boolean isTrusted, FactoryRecord factoryRecord, SectionRecord sectionRecord, Object parentResult)
+   at System.Configuration.BaseConfigurationRecord.Evaluate(FactoryRecord factoryRecord, SectionRecord sectionRecord, Object parentResult, Boolean getLkg, Boolean getRuntimeObject, Object& result, Object& resultRuntimeObject)
+   at System.Configuration.BaseConfigurationRecord.GetSectionRecursive(String configKey, Boolean getLkg, Boolean checkPermission, Boolean getRuntimeObject, Boolean requestIsHere, Object& result, Object& resultRuntimeObject)
+   at System.Configuration.BaseConfigurationRecord.GetSectionRecursive(String configKey, Boolean getLkg, Boolean checkPermission, Boolean getRuntimeObject, Boolean requestIsHere, Object& result, Object& resultRuntimeObject)
+   at System.Configuration.BaseConfigurationRecord.GetSectionRecursive(String configKey, Boolean getLkg, Boolean checkPermission, Boolean getRuntimeObject, Boolean requestIsHere, Object& result, Object& resultRuntimeObject)
+   at System.Configuration.BaseConfigurationRecord.GetSection(String configKey)
+   at System.Configuration.ClientConfigurationSystem.System.Configuration.Internal.IInternalConfigSystem.GetSection(String sectionName)
+   at System.Configuration.ConfigurationManager.get_ConnectionStrings()
+   at Lab07_ADONET_Connection.DAL.DbConnectionFactory.GetConnectionString(String connectionName) in D:\BT Classroom Lab\Lab07\Lab07_ADONET_Connection\Lab07_ADONET_Connection\DAL\DbConnectionFactory.cs:line 18
+   at Lab07_ADONET_Connection.DAL.DbConnectionFactory.GetConnectionString() in D:\BT Classroom Lab\Lab07\Lab07_ADONET_Connection\Lab07_ADONET_Connection\DAL\DbConnectionFactory.cs:line 10
+   at Lab07_ADONET_Connection.GUI.frmLab15_HeThongVaCauHinh.RefreshConfigStatus() in D:\BT Classroom Lab\Lab07\Lab07_ADONET_Connection\Lab07_ADONET_Connection\GUI\frmLab15_HeThongVaCauHinh.cs:line 121
+   at Lab07_ADONET_Connection.GUI.frmLab15_HeThongVaCauHinh.btnMaHoaConfig_Click(Object sender, EventArgs e) in D:\BT Classroom Lab\Lab07\Lab07_ADONET_Connection\Lab07_ADONET_Connection\GUI\frmLab15_HeThongVaCauHinh.cs:line 142
+2026-11-14 16:49:07.418 | INFO  | Đã giải mã mục connectionStrings trong App.config.
+2026-11-14 16:49:07.426 | ERROR | Pre-flight check thất bại ở bước kiểm tra Crystal Reports
+System.TypeInitializationException: The type initializer for 'CrystalDecisions.CrystalReports.Engine.ReportDocument' threw an exception. ---> System.IO.FileNotFoundException: Retrieving the COM class factory for component with CLSID {4DB2E2BB-78E6-4AEA-BEFB-FDAAB610FD1B} failed due to the following error: 8007007e The specified module could not be found. (Exception from HRESULT: 0x8007007E).
+   at CrystalDecisions.CrystalReports.Engine.ReportDocument..cctor()
+   --- End of inner exception stack trace ---
+   at CrystalDecisions.CrystalReports.Engine.ReportDocument..ctor()
+   at Lab07_ADONET_Connection.GUI.frmLab15_HeThongVaCauHinh.RunPreFlightChecks() in D:\BT Classroom Lab\Lab07\Lab07_ADONET_Connection\Lab07_ADONET_Connection\GUI\frmLab15_HeThongVaCauHinh.cs:line 83
+2026-11-14 16:49:26.153 | ERROR | Pre-flight check thất bại ở bước kiểm tra Crystal Reports
+System.TypeInitializationException: The type initializer for 'CrystalDecisions.CrystalReports.Engine.ReportDocument' threw an exception. ---> System.IO.FileNotFoundException: Retrieving the COM class factory for component with CLSID {4DB2E2BB-78E6-4AEA-BEFB-FDAAB610FD1B} failed due to the following error: 8007007e The specified module could not be found. (Exception from HRESULT: 0x8007007E).
+   at CrystalDecisions.CrystalReports.Engine.ReportDocument..cctor()
+   --- End of inner exception stack trace ---
+   at CrystalDecisions.CrystalReports.Engine.ReportDocument..ctor()
+   at Lab07_ADONET_Connection.GUI.frmLab15_HeThongVaCauHinh.RunPreFlightChecks() in D:\BT Classroom Lab\Lab07\Lab07_ADONET_Connection\Lab07_ADONET_Connection\GUI\frmLab15_HeThongVaCauHinh.cs:line 83
+2026-11-14 19:49:47.008 | INFO  | Ứng dụng Quản lý Sinh viên khởi động.
+2026-11-14 19:49:47.297 | ERROR | Pre-flight check thất bại ở bước kiểm tra Crystal Reports
+System.TypeInitializationException: The type initializer for 'CrystalDecisions.CrystalReports.Engine.ReportDocument' threw an exception. ---> System.IO.FileNotFoundException: Retrieving the COM class factory for component with CLSID {4DB2E2BB-78E6-4AEA-BEFB-FDAAB610FD1B} failed due to the following error: 8007007e The specified module could not be found. (Exception from HRESULT: 0x8007007E).
+   at CrystalDecisions.CrystalReports.Engine.ReportDocument..cctor()
+   --- End of inner exception stack trace ---
+   at CrystalDecisions.CrystalReports.Engine.ReportDocument..ctor()
+   at Lab07_ADONET_Connection.GUI.frmLab15_HeThongVaCauHinh.RunPreFlightChecks() in D:\BT Classroom Lab\Lab07\Lab07_ADONET_Connection\Lab07_ADONET_Connection\GUI\frmLab15_HeThongVaCauHinh.cs:line 83

@@ -105,6 +105,11 @@
   <ItemGroup>
     <Compile Include="BUS\KhoaBUS.cs" />
     <Compile Include="BUS\SinhVienBUS.cs" />
+    <Compile Include="Common\BusinessException.cs" />
+    <Compile Include="Common\ConfigSecurityHelper.cs" />
+    <Compile Include="Common\Logger.cs" />
+    <Compile Include="Common\UiExceptionHandler.cs" />
+    <Compile Include="Common\ValidationResult.cs" />
     <Compile Include="DAL\BaoCaoDAL.cs" />
     <Compile Include="DAL\DangKyDAL.cs" />
     <Compile Include="DAL\DbConnectionFactory.cs" />
@@ -163,6 +168,12 @@
     </Compile>
     <Compile Include="GUI\frmLab14_TrungTamBaoCao.Designer.cs">
       <DependentUpon>frmLab14_TrungTamBaoCao.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\frmLab15_HeThongVaCauHinh.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\frmLab15_HeThongVaCauHinh.Designer.cs">
+      <DependentUpon>frmLab15_HeThongVaCauHinh.cs</DependentUpon>
     </Compile>
     <Compile Include="GUI\frmMain.cs">
       <SubType>Form</SubType>
